@@ -1,5 +1,7 @@
 import { prisma } from "@/lib/prisma";
-import { Plus, MoreHorizontal, Search, Users } from "lucide-react";
+import { Plus, MoreHorizontal, Search, Users, Trash2 } from "lucide-react";
+import Link from "next/link";
+import { deleteClass } from "./actions";
 
 export const dynamic = 'force-dynamic';
 
@@ -22,9 +24,9 @@ export default async function ClassManagementPage() {
           <h1 className="text-xl font-semibold text-slate-900 tracking-tight">Data Rombongan Belajar (Kelas)</h1>
           <p className="text-[13px] text-slate-500 mt-1">Kelola daftar kelas, kapasitas siswa, dan penugasan wali kelas.</p>
         </div>
-        <button className="flex items-center gap-2 bg-slate-900 hover:bg-slate-800 text-white px-3 py-1.5 rounded-md text-[13px] font-medium transition-colors shadow-sm">
+        <Link href="/admin/classes/create" className="flex items-center gap-2 bg-slate-900 hover:bg-slate-800 text-white px-3 py-1.5 rounded-md text-[13px] font-medium transition-colors shadow-sm">
           <Plus className="w-3.5 h-3.5" /> Tambah Kelas
-        </button>
+        </Link>
       </div>
 
       <div className="bg-white border border-slate-200 rounded-lg shadow-sm">

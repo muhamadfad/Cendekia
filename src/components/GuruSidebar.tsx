@@ -3,7 +3,19 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { LayoutDashboard, Calendar, ClipboardCheck, Award, FileText, CheckSquare, GraduationCap } from "lucide-react";
 
-const menuGroups = [
+interface MenuItem {
+  name: string;
+  href: string;
+  icon: any;
+  isSpecial?: boolean;
+}
+
+interface MenuGroup {
+  title: string;
+  items: MenuItem[];
+}
+
+const menuGroups: MenuGroup[] = [
   {
     title: "Menu Akademik",
     items: [

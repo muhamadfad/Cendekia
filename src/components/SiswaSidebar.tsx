@@ -3,7 +3,19 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { LayoutDashboard, Wallet, GraduationCap, Calendar, Award, Bot, FileText } from "lucide-react";
 
-const menuGroups = [
+interface MenuItem {
+  name: string;
+  href: string;
+  icon: any;
+  isSpecial?: boolean;
+}
+
+interface MenuGroup {
+  title: string;
+  items: MenuItem[];
+}
+
+const menuGroups: MenuGroup[] = [
   {
     title: "Ruang Belajar",
     items: [
@@ -11,7 +23,7 @@ const menuGroups = [
       { name: "Jadwal Pelajaran", href: "/siswa/jadwal", icon: Calendar },
       { name: "Tugas & Ujian", href: "/siswa/tugas", icon: FileText },
       { name: "Nilai & E-Rapor", href: "/siswa/rapor", icon: Award },
-      { name: "Riwayat SPP", href: "/siswa/finance", icon: LogOut },
+      { name: "Riwayat SPP", href: "/siswa/finance", icon: Wallet },
     ]
   },
   {
@@ -64,7 +76,6 @@ export function SiswaSidebar() {
           </div>
         ))}
       </div>
-
     </aside>
   );
 }

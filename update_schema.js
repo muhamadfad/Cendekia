@@ -1,0 +1,303 @@
+const fs = require('fs');
+
+const schema = `generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  SUPER_ADMIN
+  ADMIN
+  TEACHER
+  STUDENT
+  PARENT
+}
+
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  password  String
+  name      String
+  role      Role     @default(STUDENT)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  studentProfile Student?
+  teacherProfile Teacher?
+  parentProfile  Parent?
+}
+
+model Parent {
+  id        String   @id @default(uuid())
+  phone     String?
+  address   String?  @db.Text
+  userId    String   @unique
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  students  Student[]
+  createdAt DateTime @default(now())
+}
+
+model Student {
+  id          String    @id @default(uuid())
+  nisn        String    @unique
+  nis         String?   @unique // Nomor Induk Siswa (Sekolah)
+  nik         String?   @unique // NIK Kependudukan
+  gender      String?   // 'L' atau 'P'
+  birthPlace  String?
+  birthDate   DateTime?
+  religion    String?
+  address     String?   @db.Text
+  parentName  String?
+  parentPhone String?
+
+  userId  String  @unique
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  classId String?
+  class   Class?  @relation(fields: [classId], references: [id])
+
+  parentId String?
+  parent   Parent? @relation(fields: [parentId], references: [id])
+
+  attendances           Attendance[]
+  grades                Grade[]
+  payments              Payment[]
+  violations            Violation[]
+  assignmentSubmissions AssignmentSubmission[]
+  examResults           ExamResult[]
+  homeroomNotes         HomeroomNote[]
+}
+
+model Teacher {
+  id     String @id @default(uuid())
+  nip    String @unique
+  userId String @unique
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  schedules         Schedule[]
+  homeroomedClasses Class[]    @relation("HomeroomTeacher")
+  materials         Material[]
+  assignments       Assignment[]
+  exams             Exam[]
+}
+
+model Class {
+  id         String @id @default(uuid())
+  name       String // e.g., "X IPA 1"
+  gradeLevel Int    // e.g., 10
+
+  homeroomTeacherId String?
+  homeroomTeacher   Teacher? @relation("HomeroomTeacher", fields: [homeroomTeacherId], references: [id])
+
+  students      Student[]
+  schedules     Schedule[]
+  materials     Material[]
+  assignments   Assignment[]
+  exams         Exam[]
+  homeroomNotes HomeroomNote[]
+}
+
+model Subject {
+  id   String  @id @default(uuid())
+  name String  // e.g., "Matematika"
+  code String?
+
+  schedules   Schedule[]
+  grades      Grade[]
+  materials   Material[]
+  assignments Assignment[]
+  exams       Exam[]
+}
+
+model Schedule {
+  id        String  @id @default(uuid())
+  classId   String
+  class     Class   @relation(fields: [classId], references: [id], onDelete: Cascade)
+  subjectId String
+  subject   Subject @relation(fields: [subjectId], references: [id], onDelete: Cascade)
+  teacherId String
+  teacher   Teacher @relation(fields: [teacherId], references: [id], onDelete: Cascade)
+
+  dayOfWeek Int    // 1 (Monday) to 5 (Friday)
+  startTime String // e.g., "08:00"
+  endTime   String // e.g., "09:30"
+}
+
+enum AttendanceStatus {
+  PRESENT
+  ABSENT
+  LATE
+  EXCUSED
+}
+
+model Attendance {
+  id        String           @id @default(uuid())
+  studentId String
+  student   Student          @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  date      DateTime
+  status    AttendanceStatus
+  notes     String?
+}
+
+model Grade {
+  id           String  @id @default(uuid())
+  studentId    String
+  student      Student @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  subjectId    String
+  subject      Subject @relation(fields: [subjectId], references: [id], onDelete: Cascade)
+  type         String  @default("UH") // TUGAS, UH, UTS, UAS
+  score        Float
+  semester     Int     // 1 or 2
+  academicYear String  // e.g., "2026/2027"
+}
+
+enum EventType {
+  NATIONAL_HOLIDAY
+  SCHOOL_HOLIDAY
+  EXAM
+  ACTIVITY
+}
+
+model AcademicCalendar {
+  id          String    @id @default(uuid())
+  title       String
+  description String?   @db.Text
+  startDate   DateTime
+  endDate     DateTime
+  type        EventType
+  isHoliday   Boolean   @default(false)
+  createdAt   DateTime  @default(now())
+}
+
+model Payment {
+  id          String    @id @default(uuid())
+  studentId   String
+  student     Student   @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  amount      Float
+  month       String    // e.g., 'Juli', 'Agustus'
+  year        Int       // e.g., 2026
+  status      String    @default("PENDING") // PENDING, PAID
+  paymentDate DateTime?
+  createdAt   DateTime  @default(now())
+}
+
+model Violation {
+  id          String    @id @default(uuid())
+  studentId   String
+  student     Student   @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  title       String
+  points      Int
+  date        DateTime  @default(now())
+  reportedBy  String
+  createdAt   DateTime  @default(now())
+}
+
+// ==========================================
+// E-LEARNING (LMS)
+// ==========================================
+model Material {
+  id          String   @id @default(uuid())
+  title       String
+  content     String?  @db.Text
+  fileUrl     String?  // PDF / Link URL
+  classId     String
+  class       Class    @relation(fields: [classId], references: [id], onDelete: Cascade)
+  subjectId   String
+  subject     Subject  @relation(fields: [subjectId], references: [id], onDelete: Cascade)
+  teacherId   String
+  teacher     Teacher  @relation(fields: [teacherId], references: [id], onDelete: Cascade)
+  createdAt   DateTime @default(now())
+}
+
+model Assignment {
+  id          String   @id @default(uuid())
+  title       String
+  description String?  @db.Text
+  dueDate     DateTime
+  maxScore    Float    @default(100)
+  classId     String
+  class       Class    @relation(fields: [classId], references: [id], onDelete: Cascade)
+  subjectId   String
+  subject     Subject  @relation(fields: [subjectId], references: [id], onDelete: Cascade)
+  teacherId   String
+  teacher     Teacher  @relation(fields: [teacherId], references: [id], onDelete: Cascade)
+  createdAt   DateTime @default(now())
+
+  submissions AssignmentSubmission[]
+}
+
+model AssignmentSubmission {
+  id           String     @id @default(uuid())
+  assignmentId String
+  assignment   Assignment @relation(fields: [assignmentId], references: [id], onDelete: Cascade)
+  studentId    String
+  student      Student    @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  fileUrl      String?
+  content      String?    @db.Text
+  submittedAt  DateTime   @default(now())
+  score        Float?
+  feedback     String?    @db.Text
+  status       String     @default("SUBMITTED") // SUBMITTED, GRADED
+}
+
+model Exam {
+  id              String       @id @default(uuid())
+  title           String
+  description     String?      @db.Text
+  durationMinutes Int          @default(60)
+  startTime       DateTime?
+  endTime         DateTime?
+  classId         String
+  class           Class        @relation(fields: [classId], references: [id], onDelete: Cascade)
+  subjectId       String
+  subject         Subject      @relation(fields: [subjectId], references: [id], onDelete: Cascade)
+  teacherId       String
+  teacher         Teacher      @relation(fields: [teacherId], references: [id], onDelete: Cascade)
+  createdAt       DateTime     @default(now())
+
+  questions       Question[]
+  results         ExamResult[]
+}
+
+model Question {
+  id            String   @id @default(uuid())
+  examId        String
+  exam          Exam     @relation(fields: [examId], references: [id], onDelete: Cascade)
+  questionText  String   @db.Text
+  options       String?  @db.Text // JSON string: ["Pilihan A", "Pilihan B", ...]
+  correctAnswer String   // e.g., "A"
+  points        Float    @default(5)
+}
+
+model ExamResult {
+  id          String   @id @default(uuid())
+  examId      String
+  exam        Exam     @relation(fields: [examId], references: [id], onDelete: Cascade)
+  studentId   String
+  student     Student  @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  score       Float
+  submittedAt DateTime @default(now())
+}
+
+model HomeroomNote {
+  id             String   @id @default(uuid())
+  studentId      String
+  student        Student  @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  classId        String
+  class          Class    @relation(fields: [classId], references: [id], onDelete: Cascade)
+  semester       Int      @default(1)
+  academicYear   String   @default("2026/2027")
+  spiritualScore String?  // 'Sangat Baik', 'Baik'
+  socialScore    String?  // 'Sangat Baik', 'Baik'
+  notes          String?  @db.Text
+  rank           Int?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}
+`;
+
+fs.writeFileSync('prisma/schema.prisma', schema, 'utf8');
+console.log('Schema updated successfully with UTF-8!');

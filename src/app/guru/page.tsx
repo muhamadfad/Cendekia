@@ -123,7 +123,7 @@ export default async function GuruDashboard() {
                   <h4 className="text-sm font-bold text-slate-800">{schedule.subject.name}</h4>
                   <div className="flex items-center gap-2 mt-1">
                     <span className="px-2 py-0.5 bg-slate-100 text-slate-600 rounded text-[10px] font-bold">Kelas {schedule.class.name}</span>
-                    <span className="px-2 py-0.5 bg-slate-100 text-slate-600 rounded text-[10px] font-bold">Ruang {schedule.roomId || 'Umum'}</span>
+                    <span className="px-2 py-0.5 bg-slate-100 text-slate-600 rounded text-[10px] font-bold">Ruang Belajar</span>
                   </div>
                 </div>
               </div>

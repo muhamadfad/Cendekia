@@ -3,6 +3,7 @@ import { ArrowLeft, CheckCircle2, AlertTriangle, Printer, Plus } from "lucide-re
 import Link from "next/link";
 import dayjs from "dayjs";
 import 'dayjs/locale/id';
+import { markAsPaid } from "../actions";
 
 dayjs.locale('id');
 export const dynamic = 'force-dynamic';
@@ -113,9 +114,11 @@ export default async function FinanceDetailPage({ params }: { params: { id: stri
                 </td>
                 <td className="px-5 py-3 text-right">
                   {payment.status === 'PENDING' && (
-                    <button className="text-[12px] font-bold text-white bg-emerald-600 hover:bg-emerald-700 px-3 py-1.5 rounded transition-colors shadow-sm">
-                      Tandai Lunas
-                    </button>
+                    <form action={markAsPaid.bind(null, payment.id, resolvedParams.id)}>
+                      <button type="submit" className="text-[12px] font-bold text-white bg-emerald-600 hover:bg-emerald-700 px-3 py-1.5 rounded transition-colors shadow-sm">
+                        Tandai Lunas
+                      </button>
+                    </form>
                   )}
                 </td>
               </tr>

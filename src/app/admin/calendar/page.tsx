@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/prisma";
 import { Plus, Calendar as CalendarIcon, Flag, BookOpen, MapPin, Search } from "lucide-react";
+import Link from "next/link";
 import dayjs from "dayjs";
 import 'dayjs/locale/id';
 
@@ -36,9 +37,7 @@ export default async function AcademicCalendarPage() {
           <h1 className="text-2xl font-bold text-slate-900">Kalender Akademik</h1>
           <p className="text-sm text-slate-500 mt-1">Kelola hari libur nasional, libur semester, dan jadwal ujian sekolah.</p>
         </div>
-        <button className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors shadow-sm">
-          <Plus className="w-4 h-4" /> Tambah Agenda
-        </button>
+        <Link href="/admin/calendar/create" className="flex items-center gap-2 bg-slate-900 text-white px-3 py-1.5 rounded-md text-[13px] font-medium"><Plus className="w-3.5 h-3.5" /> Tambah Agenda</Link>
       </div>
 
       <div className="bg-white border border-slate-200 rounded-lg shadow-sm">

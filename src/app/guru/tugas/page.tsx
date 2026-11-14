@@ -1,25 +1,21 @@
 import { prisma } from "@/lib/prisma";
-import { FileText, Plus, Users, Clock, CheckCircle, BookOpen, FileQuestion, Upload, MoreVertical, LayoutTemplate } from "lucide-react";
+import { BookOpen, FileText, Plus, Trash2, CheckCircle2, Clock, Calendar, ExternalLink, HelpCircle } from "lucide-react";
 import Link from "next/link";
-import { ContextFilter } from "@/components/ContextFilter";
+import { createMaterial, createAssignment, gradeSubmission, deleteMaterial, deleteAssignment } from "./actions";
 
 export const dynamic = 'force-dynamic';
 
-export default async function GuruTugasPage({ searchParams }: { searchParams: Promise<{ selected?: string, ta?: string, sem?: string }> }) {
+export default async function GuruTugasPage({ searchParams }: { searchParams: Promise<{ selected?: string, tab?: string }> }) {
   const resolvedParams = await searchParams;
   const selectedParam = resolvedParams.selected;
-  
-  const activeTA = resolvedParams.ta || "2026/2027";
-  const activeSem = resolvedParams.sem || "1";
+  const currentTab = resolvedParams.tab || "materi";
 
-  // Ambil sesi guru
   const teacher = await prisma.teacher.findFirst({
     include: { user: true }
   });
 
-  if (!teacher) return <div>Data Guru tidak ditemukan</div>;
+  if (!teacher) return <div className="p-8 text-sm text-slate-500">Data Guru tidak ditemukan</div>;
 
-  // Ambil jadwal mengajar untuk merender daftar kelas
   const schedules = await prisma.schedule.findMany({
     where: { teacherId: teacher.id },
     include: { class: true, subject: true }
@@ -39,154 +35,305 @@ export default async function GuruTugasPage({ searchParams }: { searchParams: Pr
     ? teachingAssignments.find(a => a.key === selectedParam) 
     : teachingAssignments[0];
 
+  const materials = activeAssignment ? await prisma.material.findMany({
+    where: { classId: activeAssignment.cls.id, subjectId: activeAssignment.sub.id },
+    orderBy: { createdAt: 'desc' }
+  }) : [];
+
+  const assignments = activeAssignment ? await prisma.assignment.findMany({
+    where: { classId: activeAssignment.cls.id, subjectId: activeAssignment.sub.id },
+    include: {
+      submissions: {
+        include: { student: { include: { user: true } } }
+      }
+    },
+    orderBy: { createdAt: 'desc' }
+  }) : [];
+
+  const exams = activeAssignment ? await prisma.exam.findMany({
+    where: { classId: activeAssignment.cls.id, subjectId: activeAssignment.sub.id },
+    include: {
+      questions: true,
+      results: { include: { student: { include: { user: true } } } }
+    },
+    orderBy: { createdAt: 'desc' }
+  }) : [];
+
   return (
-    <div className="p-8 flex flex-col h-full">
-      {/* Header & Global Filters */}
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4 shrink-0">
+    <div className="p-8 max-w-[1400px] mx-auto">
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
         <div>
-          <h1 className="text-2xl font-bold text-slate-900">Manajemen E-Learning</h1>
-          <p className="text-sm text-slate-500 mt-1">Pilih kelas terlebih dahulu untuk mengelola Modul, CBT, dan Tugas.</p>
+          <h1 className="text-xl font-semibold text-slate-900 tracking-tight">Manajemen E-Learning & Tugas</h1>
+          <p className="text-[13px] text-slate-500 mt-0.5">Kelola modul pembelajaran digital, penugasan siswa, dan ujian CBT.</p>
         </div>
-        <ContextFilter defaultTA={activeTA} defaultSem={activeSem} />
       </div>
 
-      <div className="grid grid-cols-1 xl:grid-cols-4 gap-6 items-start flex-1 min-h-0">
-        
-        {/* Left Sidebar: Pilih Kelas */}
-        <div className="xl:col-span-1 flex flex-col gap-4 overflow-y-auto pr-2 pb-8 h-full">
-          <div className="flex items-center justify-between mb-1">
-            <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider">Pilih Kelas & Mapel</h3>
-          </div>
-          
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+        {/* Left Column: Class Selector */}
+        <div className="lg:col-span-1 space-y-2">
+          <div className="text-[12px] font-semibold text-slate-400 uppercase tracking-wider mb-2">Pilih Rombel</div>
           {teachingAssignments.map((assignment, idx) => {
             const isActive = activeAssignment?.key === assignment.key;
             return (
               <Link 
-                href={`/guru/tugas?selected=${assignment.key}&ta=${activeTA}&sem=${activeSem}`}
+                href={`/guru/tugas?selected=${assignment.key}&tab=${currentTab}`}
                 key={idx} 
-                className={`p-4 border rounded-lg cursor-pointer transition-all block group ${isActive ? 'bg-emerald-50 border-emerald-500 shadow-sm' : 'bg-white border-slate-200 hover:border-emerald-300 hover:shadow-sm'}`}
+                className={`p-3 border rounded-lg transition-all block ${isActive ? 'bg-slate-900 border-slate-900 text-white shadow-sm' : 'bg-white border-slate-200 hover:border-slate-300 text-slate-800'}`}
               >
-                <h4 className={`font-bold transition-colors ${isActive ? 'text-emerald-900' : 'text-slate-700 group-hover:text-emerald-700'}`}>{assignment.cls.name}</h4>
-                <p className={`text-xs mt-1 transition-colors ${isActive ? 'text-emerald-700' : 'text-slate-500 group-hover:text-emerald-600'}`}>{assignment.sub.name}</p>
+                <div className={`text-[13px] font-semibold ${isActive ? 'text-white' : 'text-slate-900'}`}>{assignment.cls.name}</div>
+                <div className={`text-[11px] mt-0.5 ${isActive ? 'text-slate-300' : 'text-slate-500'}`}>{assignment.sub.name}</div>
               </Link>
             );
           })}
-
-          {teachingAssignments.length === 0 && (
-             <div className="p-6 text-center border border-dashed border-slate-300 rounded-lg text-slate-500 bg-slate-50">
-               Belum ada jadwal mengajar.
-             </div>
-          )}
         </div>
 
-        {/* Right Area: Konten Kelas Terpilih */}
-        <div className="xl:col-span-3 flex flex-col h-full overflow-y-auto pb-8">
+        {/* Right Column: LMS Content */}
+        <div className="lg:col-span-3 space-y-6">
           {activeAssignment ? (
-            <div className="space-y-6">
-              
-              {/* Context Header Kelas */}
-              <div className="bg-white border border-slate-200 rounded-lg shadow-sm p-6 flex flex-col md:flex-row justify-between md:items-center gap-4">
-                <div>
-                  <h2 className="text-xl font-bold text-slate-800">{activeAssignment.cls.name} - {activeAssignment.sub.name}</h2>
-                  <p className="text-xs font-semibold text-emerald-600 mt-1">Tahun Ajaran {activeTA} • Semester {activeSem === "1" ? "Ganjil" : "Genap"}</p>
-                </div>
-                <div className="flex gap-3">
-                  <button className="flex items-center gap-2 bg-white border border-slate-300 hover:bg-slate-50 text-slate-700 px-4 py-2 rounded-md text-xs font-bold transition-colors shadow-sm">
-                    <Upload className="w-4 h-4 text-slate-400" /> Upload Modul Baru
-                  </button>
-                  <button className="flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-md text-xs font-bold transition-colors shadow-sm">
-                    <Plus className="w-4 h-4" /> Buat Kuis / Tugas
-                  </button>
-                </div>
+            <>
+              {/* Tabs */}
+              <div className="flex items-center gap-1 border-b border-slate-200">
+                <Link 
+                  href={`/guru/tugas?selected=${activeAssignment.key}&tab=materi`}
+                  className={`px-4 py-2 text-[13px] font-medium border-b-2 transition-colors ${currentTab === 'materi' ? 'border-slate-900 text-slate-900 font-semibold' : 'border-transparent text-slate-500 hover:text-slate-900'}`}
+                >
+                  Modul & Materi ({materials.length})
+                </Link>
+                <Link 
+                  href={`/guru/tugas?selected=${activeAssignment.key}&tab=tugas`}
+                  className={`px-4 py-2 text-[13px] font-medium border-b-2 transition-colors ${currentTab === 'tugas' ? 'border-slate-900 text-slate-900 font-semibold' : 'border-transparent text-slate-500 hover:text-slate-900'}`}
+                >
+                  Penugasan Siswa ({assignments.length})
+                </Link>
+                <Link 
+                  href={`/guru/tugas?selected=${activeAssignment.key}&tab=cbt`}
+                  className={`px-4 py-2 text-[13px] font-medium border-b-2 transition-colors ${currentTab === 'cbt' ? 'border-slate-900 text-slate-900 font-semibold' : 'border-transparent text-slate-500 hover:text-slate-900'}`}
+                >
+                  Ujian Online / CBT ({exams.length})
+                </Link>
               </div>
 
-              {/* Konten E-Learning */}
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                
-                {/* Modul Pembelajaran */}
-                <div className="bg-white border border-slate-200 rounded-lg shadow-sm overflow-hidden">
-                  <div className="px-5 py-4 border-b border-slate-200 bg-slate-50 flex justify-between items-center">
-                    <h2 className="text-sm font-bold text-slate-800 flex items-center gap-2">
-                      <BookOpen className="w-4 h-4 text-blue-600" /> Modul Materi
-                    </h2>
-                  </div>
-                  <div className="divide-y divide-slate-100">
-                    <div className="p-5 flex items-start justify-between hover:bg-slate-50 group transition-colors">
+              {/* TAB 1: MATERI */}
+              {currentTab === 'materi' && (
+                <div className="space-y-6">
+                  {/* Form Tambah Materi */}
+                  <div className="bg-white border border-slate-200 rounded-lg p-5 shadow-sm">
+                    <h3 className="text-[13px] font-semibold text-slate-900 mb-3 flex items-center gap-2">
+                      <Plus className="w-4 h-4 text-slate-700" /> Upload Materi Belajar Baru
+                    </h3>
+                    <form action={createMaterial} className="space-y-3">
+                      <input type="hidden" name="classId" value={activeAssignment.cls.id} />
+                      <input type="hidden" name="subjectId" value={activeAssignment.sub.id} />
+                      <input type="hidden" name="teacherId" value={teacher.id} />
+
                       <div>
-                        <h4 className="text-sm font-bold text-slate-800 group-hover:text-blue-700 transition-colors">Bab 1: Pendahuluan Materi</h4>
-                        <span className="text-xs font-semibold text-slate-500 mt-1 flex items-center gap-1.5"><FileText className="w-3.5 h-3.5 text-red-500" /> PDF (2.4 MB)</span>
+                        <label className="block text-[11px] font-semibold text-slate-600 mb-1">Judul Materi / Bab</label>
+                        <input type="text" name="title" required placeholder="Contoh: Bab 3 - Termodinamika & Gas Ideal" className="w-full px-3 py-1.5 text-[13px] border border-slate-200 rounded-md outline-none focus:border-slate-400" />
                       </div>
-                      <button className="text-slate-400 hover:text-slate-700"><MoreVertical className="w-4 h-4" /></button>
-                    </div>
-                    <div className="p-5 flex items-start justify-between hover:bg-slate-50 group transition-colors">
                       <div>
-                        <h4 className="text-sm font-bold text-slate-800 group-hover:text-blue-700 transition-colors">Video: Latihan Soal Pembahasan</h4>
-                        <span className="text-xs font-semibold text-slate-500 mt-1 flex items-center gap-1.5"><FileText className="w-3.5 h-3.5 text-indigo-500" /> MP4 (15.2 MB)</span>
+                        <label className="block text-[11px] font-semibold text-slate-600 mb-1">Ringkasan / Instruksi</label>
+                        <textarea name="content" rows={2} placeholder="Penjelasan singkat materi untuk siswa..." className="w-full px-3 py-1.5 text-[13px] border border-slate-200 rounded-md outline-none focus:border-slate-400"></textarea>
                       </div>
-                      <button className="text-slate-400 hover:text-slate-700"><MoreVertical className="w-4 h-4" /></button>
-                    </div>
+                      <div>
+                        <label className="block text-[11px] font-semibold text-slate-600 mb-1">Tautan File Dokumen / Video (Google Drive / YouTube / Cloud)</label>
+                        <input type="url" name="fileUrl" placeholder="https://..." className="w-full px-3 py-1.5 text-[13px] border border-slate-200 rounded-md outline-none focus:border-slate-400" />
+                      </div>
+                      <div className="pt-2 flex justify-end">
+                        <button type="submit" className="px-3 py-1.5 bg-slate-900 hover:bg-slate-800 text-white text-[13px] font-medium rounded-md shadow-sm">
+                          Terbitkan Materi
+                        </button>
+                      </div>
+                    </form>
+                  </div>
+
+                  {/* List Materi */}
+                  <div className="space-y-3">
+                    {materials.map(m => (
+                      <div key={m.id} className="bg-white border border-slate-200 rounded-lg p-4 shadow-sm flex justify-between items-start">
+                        <div className="space-y-1">
+                          <h4 className="text-[14px] font-semibold text-slate-900">{m.title}</h4>
+                          {m.content && <p className="text-[12px] text-slate-600 leading-relaxed">{m.content}</p>}
+                          {m.fileUrl && (
+                            <a href={m.fileUrl} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1.5 text-[12px] font-medium text-blue-600 hover:underline pt-1">
+                              <ExternalLink className="w-3.5 h-3.5" /> Buka Lampiran Materi
+                            </a>
+                          )}
+                        </div>
+                        <form action={deleteMaterial.bind(null, m.id)}>
+                          <button type="submit" className="p-1.5 text-slate-400 hover:text-red-600 rounded transition-colors" title="Hapus Materi">
+                            <Trash2 className="w-3.5 h-3.5" />
+                          </button>
+                        </form>
+                      </div>
+                    ))}
+                    {materials.length === 0 && (
+                      <div className="text-center py-8 bg-slate-50 border border-dashed border-slate-200 rounded-lg text-slate-400 text-[13px]">
+                        Belum ada materi pembelajaran yang diunggah untuk kelas ini.
+                      </div>
+                    )}
                   </div>
                 </div>
+              )}
 
-                {/* Tugas Terstruktur */}
-                <div className="bg-white border border-slate-200 rounded-lg shadow-sm overflow-hidden">
-                  <div className="px-5 py-4 border-b border-slate-200 bg-slate-50 flex justify-between items-center">
-                    <h2 className="text-sm font-bold text-slate-800 flex items-center gap-2">
-                      <FileText className="w-4 h-4 text-emerald-600" /> Tugas Terstruktur
-                    </h2>
+              {/* TAB 2: TUGAS */}
+              {currentTab === 'tugas' && (
+                <div className="space-y-6">
+                  {/* Form Tambah Tugas */}
+                  <div className="bg-white border border-slate-200 rounded-lg p-5 shadow-sm">
+                    <h3 className="text-[13px] font-semibold text-slate-900 mb-3 flex items-center gap-2">
+                      <Plus className="w-4 h-4 text-slate-700" /> Terbitkan Tugas Baru
+                    </h3>
+                    <form action={createAssignment} className="space-y-3">
+                      <input type="hidden" name="classId" value={activeAssignment.cls.id} />
+                      <input type="hidden" name="subjectId" value={activeAssignment.sub.id} />
+                      <input type="hidden" name="teacherId" value={teacher.id} />
+
+                      <div>
+                        <label className="block text-[11px] font-semibold text-slate-600 mb-1">Judul Tugas</label>
+                        <input type="text" name="title" required placeholder="Contoh: Tugas Mandiri Resensi Artikel Ilmiah" className="w-full px-3 py-1.5 text-[13px] border border-slate-200 rounded-md outline-none focus:border-slate-400" />
+                      </div>
+                      <div>
+                        <label className="block text-[11px] font-semibold text-slate-600 mb-1">Deskripsi Petunjuk Pengerjaan</label>
+                        <textarea name="description" rows={2} placeholder="Jelaskan kriteria dan format pengumpulan..." className="w-full px-3 py-1.5 text-[13px] border border-slate-200 rounded-md outline-none focus:border-slate-400"></textarea>
+                      </div>
+                      <div>
+                        <label className="block text-[11px] font-semibold text-slate-600 mb-1">Batas Waktu Pengumpulan (Deadline)</label>
+                        <input type="datetime-local" name="dueDate" required className="w-full px-3 py-1.5 text-[13px] border border-slate-200 rounded-md outline-none focus:border-slate-400" />
+                      </div>
+                      <div className="pt-2 flex justify-end">
+                        <button type="submit" className="px-3 py-1.5 bg-slate-900 hover:bg-slate-800 text-white text-[13px] font-medium rounded-md shadow-sm">
+                          Buat Tugas
+                        </button>
+                      </div>
+                    </form>
                   </div>
-                  <div className="p-5 space-y-4">
-                    <div className="border border-slate-200 rounded-lg p-4 bg-white relative overflow-hidden group hover:border-emerald-300 transition-colors">
-                      <div className="absolute top-0 left-0 w-1 h-full bg-emerald-500"></div>
-                      <div className="flex justify-between items-start mb-2">
-                        <h4 className="text-sm font-bold text-slate-800">Tugas Mandiri 1</h4>
-                        <span className="px-2 py-0.5 bg-red-50 text-red-600 text-[10px] font-bold rounded border border-red-100 flex items-center gap-1"><Clock className="w-3 h-3" /> Besok</span>
+
+                  {/* List Tugas & Submissions */}
+                  <div className="space-y-4">
+                    {assignments.map(a => (
+                      <div key={a.id} className="bg-white border border-slate-200 rounded-lg p-5 shadow-sm space-y-4">
+                        <div className="flex justify-between items-start">
+                          <div>
+                            <h4 className="text-[14px] font-semibold text-slate-900">{a.title}</h4>
+                            <p className="text-[12px] text-slate-600 mt-1">{a.description}</p>
+                            <div className="flex items-center gap-2 mt-2 text-[11px] text-slate-500">
+                              <span className="inline-flex items-center gap-1 font-medium text-amber-700 bg-amber-50 px-2 py-0.5 rounded border border-amber-200">
+                                <Clock className="w-3 h-3" /> Deadline: {new Date(a.dueDate).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' })}
+                              </span>
+                              <span>&bull;</span>
+                              <span>{a.submissions.length} Siswa Mengumpulkan</span>
+                            </div>
+                          </div>
+                          <form action={deleteAssignment.bind(null, a.id)}>
+                            <button type="submit" className="p-1.5 text-slate-400 hover:text-red-600 rounded transition-colors" title="Hapus Tugas">
+                              <Trash2 className="w-3.5 h-3.5" />
+                            </button>
+                          </form>
+                        </div>
+
+                        {/* Submissions Section */}
+                        {a.submissions.length > 0 && (
+                          <div className="pt-3 border-t border-slate-100 space-y-2">
+                            <div className="text-[12px] font-semibold text-slate-700">Hasil Pengumpulan Tugas:</div>
+                            {a.submissions.map(sub => (
+                              <form key={sub.id} action={gradeSubmission} className="bg-slate-50 p-3 rounded-md border border-slate-200 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+                                <input type="hidden" name="submissionId" value={sub.id} />
+                                <div className="space-y-0.5">
+                                  <div className="text-[13px] font-semibold text-slate-900">{sub.student.user.name}</div>
+                                  <div className="text-[11px] text-slate-500">Teks: {sub.content || '-'}</div>
+                                  {sub.fileUrl && (
+                                    <a href={sub.fileUrl} target="_blank" rel="noreferrer" className="text-[11px] text-blue-600 hover:underline flex items-center gap-1">
+                                      <ExternalLink className="w-3 h-3" /> Lihat Lampiran Tugas
+                                    </a>
+                                  )}
+                                </div>
+                                <div className="flex items-center gap-2 w-full sm:w-auto">
+                                  <input 
+                                    type="number" 
+                                    name="score" 
+                                    defaultValue={sub.score || ''} 
+                                    placeholder="Nilai (0-100)" 
+                                    required 
+                                    className="w-24 px-2 py-1 text-[12px] font-semibold border border-slate-200 rounded bg-white text-center" 
+                                  />
+                                  <input 
+                                    type="text" 
+                                    name="feedback" 
+                                    defaultValue={sub.feedback || ''} 
+                                    placeholder="Komentar / Feedback..." 
+                                    className="px-2 py-1 text-[12px] border border-slate-200 rounded bg-white w-48" 
+                                  />
+                                  <button type="submit" className="px-3 py-1 bg-slate-900 hover:bg-slate-800 text-white text-[12px] font-medium rounded shadow-sm">
+                                    Beri Nilai
+                                  </button>
+                                </div>
+                              </form>
+                            ))}
+                          </div>
+                        )}
                       </div>
-                      <div className="flex justify-between items-center text-xs mt-3">
-                        <span className="font-semibold text-slate-500">Batas Waktu: 12 Nov, 23:59</span>
-                        <span className="font-bold text-emerald-600">Dikumpulkan: 18/32</span>
+                    ))}
+                    {assignments.length === 0 && (
+                      <div className="text-center py-8 bg-slate-50 border border-dashed border-slate-200 rounded-lg text-slate-400 text-[13px]">
+                        Belum ada tugas yang diterbitkan.
                       </div>
-                      <button className="w-full mt-3 py-1.5 text-xs font-bold bg-slate-50 hover:bg-emerald-50 text-slate-700 hover:text-emerald-700 border border-slate-200 hover:border-emerald-200 rounded transition-colors">
-                        Koreksi Jawaban
-                      </button>
-                    </div>
+                    )}
                   </div>
                 </div>
+              )}
 
-                {/* Kuis CBT */}
-                <div className="bg-white border border-slate-200 rounded-lg shadow-sm overflow-hidden lg:col-span-2">
-                  <div className="px-5 py-4 border-b border-slate-200 bg-slate-50 flex justify-between items-center">
-                    <h2 className="text-sm font-bold text-slate-800 flex items-center gap-2">
-                      <FileQuestion className="w-4 h-4 text-amber-500" /> Ulangan & Kuis CBT
-                    </h2>
-                  </div>
-                  <div className="p-5 flex flex-col md:flex-row gap-4">
-                    <div className="border border-slate-200 p-4 rounded-lg hover:border-amber-300 transition-colors flex-1 bg-white shadow-sm">
-                      <div className="flex justify-between items-start mb-2">
-                        <span className="px-2 py-0.5 bg-amber-50 text-amber-700 text-[10px] font-bold rounded uppercase tracking-wider border border-amber-200">Ulangan Harian</span>
-                        <span className="text-xs font-bold text-emerald-600 flex items-center gap-1"><CheckCircle className="w-3.5 h-3.5" /> Sedang Berjalan</span>
+              {/* TAB 3: CBT / UJIAN */}
+              {currentTab === 'cbt' && (
+                <div className="space-y-4">
+                  {exams.map(ex => (
+                    <div key={ex.id} className="bg-white border border-slate-200 rounded-lg p-5 shadow-sm space-y-3">
+                      <div className="flex justify-between items-start">
+                        <div>
+                          <h4 className="text-[14px] font-semibold text-slate-900">{ex.title}</h4>
+                          <p className="text-[12px] text-slate-600 mt-1">{ex.description}</p>
+                          <div className="flex items-center gap-3 mt-2 text-[11px] text-slate-500 font-medium">
+                            <span className="flex items-center gap-1"><Clock className="w-3.5 h-3.5" /> Durasi: {ex.durationMinutes} Menit</span>
+                            <span>&bull;</span>
+                            <span className="flex items-center gap-1"><HelpCircle className="w-3.5 h-3.5" /> {ex.questions.length} Soal</span>
+                            <span>&bull;</span>
+                            <span>{ex.results.length} Siswa Sudah Mengikuti</span>
+                          </div>
+                        </div>
                       </div>
-                      <h3 className="text-sm font-bold text-slate-800">UH 1: {activeAssignment.sub.name}</h3>
-                      <p className="text-xs text-slate-500 mt-1">20 Pilihan Ganda • Waktu: 45 Menit</p>
-                      <div className="mt-4 pt-3 border-t border-slate-100 flex justify-between items-center">
-                        <div className="text-xs font-bold text-slate-600">Selesai: 24/32 Siswa</div>
-                        <button className="text-xs font-bold bg-slate-100 hover:bg-slate-200 text-slate-700 px-3 py-1.5 rounded transition-colors">Monitor Ujian</button>
-                      </div>
+
+                      {/* Results summary */}
+                      {ex.results.length > 0 && (
+                        <div className="pt-3 border-t border-slate-100">
+                          <div className="text-[12px] font-semibold text-slate-700 mb-2">Rekap Nilai Siswa:</div>
+                          <div className="divide-y divide-slate-100">
+                            {ex.results.map(res => (
+                              <div key={res.id} className="py-1.5 flex justify-between items-center text-[12px]">
+                                <span className="font-medium text-slate-800">{res.student.user.name}</span>
+                                <span className="font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
+                                  Skor: {res.score}
+                                </span>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
                     </div>
-                  </div>
+                  ))}
+                  {exams.length === 0 && (
+                    <div className="text-center py-8 bg-slate-50 border border-dashed border-slate-200 rounded-lg text-slate-400 text-[13px]">
+                      Belum ada paket CBT aktif untuk kelas ini.
+                    </div>
+                  )}
                 </div>
-
-              </div>
-            </div>
+              )}
+            </>
           ) : (
-            <div className="h-full flex flex-col items-center justify-center text-slate-500 border border-dashed border-slate-300 rounded-lg bg-slate-50/50">
-               <LayoutTemplate className="w-12 h-12 text-slate-300 mb-3" />
-               <p className="font-medium text-slate-600">Pilih kelas di samping</p>
-               <p className="text-sm mt-1">Untuk mulai mengelola Modul dan Tugas.</p>
+            <div className="bg-white border border-slate-200 p-8 text-center rounded-lg text-slate-500 text-[13px]">
+              Pilih kelas di sebelah kiri untuk melihat materi dan tugas.
             </div>
           )}
         </div>
-
       </div>
     </div>
   );

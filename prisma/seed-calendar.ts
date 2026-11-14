@@ -56,7 +56,8 @@ async function main() {
     await prisma.academicCalendar.create({
       data: {
         id: uuidv4(),
-        ...evt
+        ...evt,
+        type: evt.type as any
       }
     });
   }

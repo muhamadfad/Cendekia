@@ -24,7 +24,7 @@ async function addSchedules() {
   await prisma.schedule.createMany({
     data: [
       { classId: kelas.id, subjectId: math.id, teacherId: teacher.id, dayOfWeek: 1, startTime: "07:15", endTime: "08:45" },
-      { classId: kelas.id, subjectId: physics.id, teacherId: teacher.id, dayOfWeek: 2, startTime: "09:00", endTime: "10:30" }
+      { classId: kelas.id, subjectId: physics?.id || math.id, teacherId: teacher.id, dayOfWeek: 2, startTime: "09:00", endTime: "10:30" }
     ]
   });
 

@@ -94,7 +94,7 @@ export default async function SiswaDashboard() {
                   <h4 className="text-base font-bold text-slate-800">{schedule.subject.name}</h4>
                   <div className="flex items-center gap-3 mt-1.5">
                     <span className="text-xs font-semibold text-slate-500 flex items-center gap-1">
-                      <Clock className="w-3.5 h-3.5" /> Ruang {schedule.roomId || 'Umum'}
+                      <Clock className="w-3.5 h-3.5" /> Ruang Belajar
                     </span>
                   </div>
                 </div>

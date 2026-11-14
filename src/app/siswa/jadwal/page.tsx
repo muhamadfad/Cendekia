@@ -33,15 +33,16 @@ export default async function SiswaJadwalPage() {
   }
 
   // Kelompokkan jadwal berdasarkan hari
-  const days = ["Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
-  const rawSchedules = student.class.schedules;
+  const days = ["Senin", "Selasa", "Rabu", "Kamis", "Jumat"];
+  const rawSchedules = student.class?.schedules || [];
   
   // Create grouped schedule
-  const groupedSchedule = days.map(dayName => {
+  const groupedSchedule = days.map((dayName, idx) => {
+    const dayNumber = idx + 1;
     return {
       day: dayName,
       classes: rawSchedules
-        .filter(s => s.dayOfWeek === dayName.toLowerCase())
+        .filter(s => s.dayOfWeek === dayNumber)
         .sort((a, b) => a.startTime.localeCompare(b.startTime))
     };
   });
@@ -51,7 +52,7 @@ export default async function SiswaJadwalPage() {
       <div className="mb-6 flex justify-between items-end">
         <div>
           <h1 className="text-2xl font-bold text-slate-900">Jadwal Pelajaran</h1>
-          <p className="text-sm text-slate-500 mt-1">Kelas <span className="font-bold text-indigo-600">{student.class.name}</span> - Tahun Ajaran 2026/2027</p>
+          <p className="text-sm text-slate-500 mt-1">Kelas <span className="font-bold text-indigo-600">{student.class?.name || '-'}</span> - Tahun Ajaran 2026/2027</p>
         </div>
       </div>
 
@@ -81,7 +82,7 @@ export default async function SiswaJadwalPage() {
                     </div>
                     <div className="flex items-center gap-2 text-xs text-slate-500 font-medium">
                       <MapPin className="w-3.5 h-3.5 text-slate-400" />
-                      Ruang {cls.roomId || student.class.name}
+                      Ruang {student.class?.name || 'Kelas'}
                     </div>
                   </div>
                 </div>
