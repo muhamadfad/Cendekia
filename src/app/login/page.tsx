@@ -35,6 +35,7 @@ export default function LoginPage() {
       if (role === 'ADMIN') router.push("/admin");
       else if (role === 'TEACHER') router.push("/guru");
       else if (role === 'STUDENT') router.push("/siswa");
+      else if (role === 'PARENT') router.push("/orangtua");
       else router.push("/");
       
       router.refresh();
