@@ -1,5 +1,5 @@
 import { prisma } from "@/lib/prisma";
-import { Users, GraduationCap, CheckCircle2, Clock, AlertTriangle, ShieldAlert, Phone, Mail, Award, ArrowUpRight } from "lucide-react";
+import { Users, GraduationCap, CheckCircle2, Clock, AlertTriangle, ShieldAlert, Phone, Mail, Award, ArrowUpRight, Video, Calendar } from "lucide-react";
 import Link from "next/link";
 import dayjs from "dayjs";
 import 'dayjs/locale/id';
@@ -133,6 +133,34 @@ export default async function OrangTuaDashboardPage() {
           <div className="text-[11px] text-slate-500 flex items-center gap-1">
             <Phone className="w-3 h-3 text-slate-400" /> 0812-9876-5432
           </div>
+        </div>
+      </div>
+
+      {/* Smart Meeting Banner for Parents */}
+      <div className="bg-white border border-slate-200 rounded-lg p-5 shadow-sm flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-l-4 border-l-blue-600">
+        <div className="space-y-1">
+          <div className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded text-[11px] font-bold bg-blue-50 text-blue-700 border border-blue-200">
+            <Video className="w-3.5 h-3.5" /> Rapat Online & Konsultasi Rapor Terjadwal
+          </div>
+          <h3 className="text-[14px] font-bold text-slate-900 mt-1">
+            Rapat Pleno Komite & Evaluasi Hasil Belajar Semester Ganjil
+          </h3>
+          <p className="text-[12px] text-slate-500">
+            Sabtu, 20 Desember 2026 &bull; Pukul 09:00 - 11:30 WIB &bull; Dihadiri Kepala Sekolah, Wali Kelas, dan Wali Murid.
+          </p>
+          <div className="text-[11px] text-slate-500 font-mono mt-0.5">
+            Meeting ID: 842 1928 3341 &bull; Passcode: cendekia26
+          </div>
+        </div>
+        <div className="flex items-center gap-2 shrink-0">
+          <a 
+            href="https://zoom.us/join" 
+            target="_blank" 
+            rel="noreferrer"
+            className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-[13px] font-semibold transition-colors shadow-sm"
+          >
+            <Video className="w-4 h-4" /> Masuk Zoom Meeting
+          </a>
         </div>
       </div>
 
