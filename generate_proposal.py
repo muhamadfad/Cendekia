@@ -514,28 +514,36 @@ def build_comprehensive_proposal():
     add_heading_with_spacing(doc, "9. SKEMA PENAWARAN INVESTASI & BIAYA KERJA SAMA", level=1, color=COLOR_PRIMARY)
 
     doc.add_paragraph(
-        "Kami menyediakan skema kerja sama yang fleksibel dan dapat disesuaikan dengan kapasitas anggaran serta jumlah siswa di sekolah Bapak/Ibu:"
+        "Banyak institusi sekolah merasa terbebani apabila harus membayar biaya pengadaan sistem teknologi informasi dengan nominal puluhan juta rupiah di awal tahun ajaran. Hal tersebut sering kali memicu penolakan dari pihak yayasan atau benturan dengan pos anggaran tahunan yang sudah terkunci."
+    )
+    doc.add_paragraph(
+        "Oleh karena itu, CENDEKIA mengadopsi model kemitraan strategis: 'BIAYA AWAL RINGAN + MAINTENANCE BULANAN TERJANGKAU' (Low Barrier Onboarding & Managed Cloud Retainer). Dengan skema ini, sekolah TIDAK PERLU mengeluarkan modal besar di awal, melainkan hanya membayar biaya aktivasi terjangkau dan biaya pemeliharaan berkala yang sangat mudah dialokasikan dari anggaran operasional berjalan (Dana BOS maupun komite sekolah)."
     )
 
     table_price = doc.add_table(rows=1, cols=4)
     table_price.alignment = WD_TABLE_ALIGNMENT.CENTER
-    format_table_headers(table_price, ["Pilihan Paket", "Biaya Investasi", "Fasilitas & Fitur Yang Didapat", "Rekomendasi Penggunaan"])
+    format_table_headers(table_price, ["Pilihan Skema Kerja Sama", "Biaya Investasi Awal & Bulanan", "Cakupan Layanan & Fasilitas", "Nilai Keunggulan Bagi Sekolah"])
 
     pricing_options = [
-        ("Paket Starter (SaaS Bulanan)",
-         "Rp 3.500 / siswa / bulan",
-         "• Seluruh Modul Web (Admin, Guru, Siswa, Ortu)\n• E-Rapor Digital & Modul Nilai\n• Billing SPP Massal & CBT Online\n• Cloud Server & Maintenance Bulanan",
-         "Cocok untuk tahap pengenalan atau uji coba selama 1 semester pertama."),
+        ("PAKET SMART PARTNERSHIP\n(Rekomendasi Utama - Paling Diminati)",
+         "• Biaya Setup Awal: Rp 1.500.000 (1x bayar)\n• Maintenance: Rp 490.000 / bulan (Flat)",
+         "• Setup Cloud Server & Database Sekolah\n• Migrasi Data Siswa dari Dapodik / Excel\n• Pelatihan (Workshop) Guru & Staf TU\n• Seluruh Modul Web & Mobile Lengkap\n• Cloud Hosting & Backup Mingguan Otomatis\n• Bantuan Teknis Pendampingan via WhatsApp",
+         "Sangat meringankan beban sekolah di awal! Biaya bulanan setara pembelian kertas 2 rim, namun seluruh operasional sekolah otomatis terdigitalisasi."),
 
-        ("Paket Tahunan Mandiri (Best Value)",
-         "Rp 35.000 / siswa / tahun\n(Hemat Biaya 20%)",
-         "• Seluruh Fitur Paket Starter\n• Domain Sekolah (cendekia.sekolah.sch.id)\n• Pelatihan Intensif Guru & Staf TU\n• Backup Otomatis Mingguan\n• Prioritas Dukungan Teknis 24/7",
-         "Paling diminati oleh sekolah berprestasi, yayasan swasta, dan sekolah negeri unggulan."),
+        ("PAKET PER-SISWA (FLEXIBLE SCALE)\n(Ideal untuk Sekolah Berkembang)",
+         "• Biaya Setup Awal: Rp 1.000.000 (1x bayar)\n• Maintenance: Rp 2.500 / siswa / bulan",
+         "• Seluruh Fasilitas Paket Smart Partnership\n• Biaya menyesuaikan jumlah siswa aktif riil\n• Akses penuh Portal Siswa & Wali Murid\n• Integrasi CBT Exam & E-Rapor Digital",
+         "Sangat adil dan proporsional. Sekolah dapat menyisihkan dari iuran pengembangan siswa (misal Rp 5.000/siswa/bulan), sehingga kas sekolah justru surplus."),
 
-        ("Paket Lisensi Penuh (Enterprise / Beli Putus)",
+        ("PAKET TAHUNAN HEMAT\n(Efisiensi Maksimal 1 Tahun Ajaran)",
+         "• Setup: GRATIS (Promo)\n• Maintenance: Rp 4.900.000 / tahun (Hemat 2 Bulan)",
+         "• Seluruh Fasilitas Paket Smart Partnership\n• Domain Sekolah (cendekia.sekolah.sch.id)\n• Pelatihan Tambahan Guru Semester 2\n• Garansi Pemeliharaan Penuh 12 Bulan",
+         "Praktis untuk sekolah dengan penganggaran tahunan BOS. Sekolah menghemat biaya 2 bulan maintenance dan bebas biaya setup."),
+
+        ("PAKET ENTERPRISE (BELI PUTUS)\n(Lisensi Mandiri Yayasan)",
          "Hubungi Tim Pengembang\n(One-Time License Fee)",
-         "• Full Source Code & Hak Lisensi Mandiri\n• Instalasi di Server Lokal / VPS Mandiri Yayasan\n• Bebas Iuran Bulanan / Tahunan Per Siswa\n• Kustomisasi Fitur Khusus Kurikulum Yayasan\n• Garansi Pemeliharaan Sistem 12 Bulan",
-         "Sangat ideal untuk Yayasan Besar dengan banyak unit sekolah atau sekolah yang memiliki server mandiri.")
+         "• Full Source Code & Hak Lisensi Mandiri\n• Instalasi di Server Lokal / VPS Mandiri Yayasan\n• Bebas Biaya Langganan Bulanan Selamanya\n• Kustomisasi Khusus Kurikulum Yayasan",
+         "Pilihan terbaik bagi yayasan berskala besar yang mengelola banyak cabang sekolah dan memiliki divisi IT internal.")
     ]
 
     for p_name, p_cost, p_feat, p_rec in pricing_options:
@@ -549,15 +557,62 @@ def build_comprehensive_proposal():
         for idx, c in enumerate(cells):
             set_cell_margins(c, top=100, bottom=100, left=120, right=120)
             if idx == 0:
-                set_cell_background(c, "F1F5F9")
+                if "Rekomendasi Utama" in p_name:
+                    set_cell_background(c, "FEF3C7")  # Warm Amber highlight
+                else:
+                    set_cell_background(c, "F1F5F9")
             elif idx == 1:
                 set_cell_background(c, "EFF6FF")
 
             for p in c.paragraphs:
                 for r in p.runs:
-                    r.font.size = Pt(9)
+                    r.font.size = Pt(8.5)
                     if idx in [0, 1]:
                         r.font.bold = True
+
+    add_heading_with_spacing(doc, "9.1. Apa Saja yang Didapat Sekolah dari Biaya Maintenance Bulanan?", level=2, space_before=14, space_after=6, color=COLOR_SECONDARY)
+    
+    maint_items = [
+        ("Cloud Infrastructure 24/7 & Uptime 99.8%: ", "Sekolah tidak perlu membeli komputer server fisik yang bising, menyewa IP statis, atau membayar listrik cadangan (UPS). Seluruh sistem aktif di awan dan dapat diakses 24 jam nonstop."),
+        ("Pencadangan Data Otomatis (Automatic Weekly Backup): ", "Seluruh basis data nilai, absensi, dan transaksi SPP dicadangkan secara berkala ke lokasi server terpisah. Data sekolah terjamin aman 100% dari risiko virus, kerusakan hardware, maupun ancaman ransomware."),
+        ("Dukungan Teknis Prioritas (Dedicated Helpdesk via WhatsApp): ", "Tim teknis kami siap mendampingi operator TU, bendahara, maupun guru yang mengalami kesulitan teknis atau lupa alur kerja sistem pada setiap hari kerja."),
+        ("Pembaruan Sistem & Regulasi Kurikulum Gratis: ", "Apabila terdapat perubahan format rapor atau peraturan kurikulum baru dari Kemendikbudristek, pembaruan fitur (system update) diberikan secara cuma-cuma tanpa tagihan proyek baru."),
+        ("Pemeliharaan Integrasi Rapat Virtual: ", "Memastikan seluruh tautan rapat Zoom dan Google Meet pada portal siswa dan orang tua selalu tersinkronisasi dengan lancar.")
+    ]
+
+    for m_title, m_desc in maint_items:
+        p = doc.add_paragraph(style='List Bullet')
+        p.paragraph_format.space_before = Pt(3)
+        p.paragraph_format.space_after = Pt(3)
+        r1 = p.add_run(m_title)
+        r1.font.bold = True
+        r1.font.size = Pt(9.5)
+        r1.font.color.rgb = COLOR_PRIMARY
+        r2 = p.add_run(m_desc)
+        r2.font.size = Pt(9.5)
+
+    add_heading_with_spacing(doc, "9.2. Kesesuaian Alokasi Pembiayaan dengan Petunjuk Teknis Dana BOS", level=2, space_before=12, space_after=6, color=COLOR_SECONDARY)
+
+    doc.add_paragraph(
+        "Bagi sekolah penerima Dana Bantuan Operasional Sekolah (BOS Reguler / Kinerja), biaya pemeliharaan bulanan sistem Cendekia merupakan belanja operasional yang 100% SAH dan LEGAL sesuai dengan Peraturan Menteri Pendidikan, Kebudayaan, Riset, dan Teknologi (Permendikbudristek) tentang Petunjuk Teknis Pengelolaan Dana BOS, yaitu pada komponen:"
+    )
+
+    bos_points = [
+        ("Komponen Pengembangan Perpustakaan dan Layanan Pembelajaran Digital: ", "Pengadaan modul ajar digital, perpustakaan materi, dan platform asesmen CBT."),
+        ("Komponen Pelaksanaan Asesmen dan Evaluasi Pembelajaran: ", "Penyelenggaraan ujian tengah/akhir semester berbasis komputer secara mandiri."),
+        ("Komponen Administrasi Kegiatan Sekolah & Pembiayaan Langganan Daya dan Jasa: ", "Pembiayaan langganan aplikasi manajemen sekolah berbasis cloud dan sewa perangkat lunak operasional tata usaha.")
+    ]
+
+    for b_title, b_desc in bos_points:
+        p = doc.add_paragraph(style='List Bullet')
+        p.paragraph_format.space_before = Pt(2)
+        p.paragraph_format.space_after = Pt(2)
+        r1 = p.add_run(b_title)
+        r1.font.bold = True
+        r1.font.size = Pt(9.5)
+        r1.font.color.rgb = COLOR_ACCENT
+        r2 = p.add_run(b_desc)
+        r2.font.size = Pt(9.5)
 
     doc.add_page_break()
 
