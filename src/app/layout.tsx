@@ -14,7 +14,18 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "Cendekia | Sistem Manajemen Sekolah",
-  description: "Platform manajemen sekolah terpadu yang menghubungkan siswa, guru, dan administrasi.",
+  description: "Platform manajemen sekolah terpadu yang menghubungkan siswa, guru, orang tua, dan administrasi.",
+  manifest: "/manifest.webmanifest",
+  themeColor: "#4f46e5",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "default",
+    title: "Cendekia Mobile",
+  },
+  icons: {
+    icon: "/icon-192.png",
+    apple: "/icon-192.png",
+  },
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
