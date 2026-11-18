@@ -4,313 +4,637 @@ from docx.enum.text import WD_ALIGN_PARAGRAPH
 from docx.enum.table import WD_TABLE_ALIGNMENT, WD_ALIGN_VERTICAL
 from docx.oxml import OxmlElement, parse_xml
 from docx.oxml.ns import nsdecls, qn
+import os
 
 def set_cell_background(cell, fill_hex):
     tcPr = cell._tc.get_or_add_tcPr()
     tcPr.append(parse_xml(f'<w:shd {nsdecls("w")} w:fill="{fill_hex}"/>'))
 
-def set_cell_margins(cell, top=100, bottom=100, left=150, right=150):
+def set_cell_margins(cell, top=120, bottom=120, left=160, right=160):
     tcPr = cell._tc.get_or_add_tcPr()
     tcMar = parse_xml(f'<w:tcMar {nsdecls("w")}><w:top w:w="{top}" w:type="dxa"/><w:bottom w:w="{bottom}" w:type="dxa"/><w:left w:w="{left}" w:type="dxa"/><w:right w:w="{right}" w:type="dxa"/></w:tcMar>')
     tcPr.append(tcMar)
 
-def create_proposal():
+def add_heading_with_spacing(doc, text, level, space_before=18, space_after=8, color=None):
+    h = doc.add_heading(text, level=level)
+    h.paragraph_format.space_before = Pt(space_before)
+    h.paragraph_format.space_after = Pt(space_after)
+    h.paragraph_format.keep_with_next = True
+    if color:
+        for r in h.runs:
+            r.font.color.rgb = color
+    return h
+
+def format_table_headers(table, titles, fill_hex="0F172A"):
+    hdr_cells = table.rows[0].cells
+    for idx, title in enumerate(titles):
+        hdr_cells[idx].text = title
+        set_cell_background(hdr_cells[idx], fill_hex)
+        set_cell_margins(hdr_cells[idx], top=140, bottom=140, left=160, right=160)
+        for p in hdr_cells[idx].paragraphs:
+            p.alignment = WD_ALIGN_PARAGRAPH.LEFT
+            for r in p.runs:
+                r.font.bold = True
+                r.font.color.rgb = RGBColor(255, 255, 255)
+                r.font.size = Pt(9.5)
+
+def build_comprehensive_proposal():
     doc = docx.Document()
 
-    # Set Margins
+    # Margin Setup (A4 standard: Top=1", Bottom=1", Left=1", Right=1")
     for section in doc.sections:
         section.top_margin = Inches(1)
         section.bottom_margin = Inches(1)
         section.left_margin = Inches(1)
         section.right_margin = Inches(1)
+        section.page_width = Inches(8.27)  # A4
+        section.page_height = Inches(11.69)
 
-    # Styles
+    # Color Palette - Professional Corporate Navy/Slate
     COLOR_PRIMARY = RGBColor(15, 23, 42)     # Slate 900
     COLOR_SECONDARY = RGBColor(30, 41, 59)   # Slate 800
     COLOR_ACCENT = RGBColor(37, 99, 235)     # Blue 600
     COLOR_MUTED = RGBColor(100, 116, 139)    # Slate 500
+    COLOR_SUCCESS = RGBColor(16, 185, 129)   # Emerald 600
+    COLOR_DANGER = RGBColor(225, 29, 72)     # Rose 600
 
-    # ==========================================
-    # HALAMAN JUDUL / COVER
-    # ==========================================
+    # =========================================================================
+    # HALAMAN COVER / JUDUL UTAMA
+    # =========================================================================
     p_pre = doc.add_paragraph()
     p_pre.alignment = WD_ALIGN_PARAGRAPH.CENTER
-    run_pre = p_pre.add_run("PROPOSAL PENAWARAN & KERJA SAMA SISTEM INFORMASI SEKOLAH")
-    run_pre.font.size = Pt(11)
-    run_pre.font.bold = True
-    run_pre.font.color.rgb = COLOR_ACCENT
+    r_pre = p_pre.add_run("PROPOSAL PENAWARAN & KERJA SAMA DIGITALISASI SEKOLAH")
+    r_pre.font.size = Pt(11)
+    r_pre.font.bold = True
+    r_pre.font.color.rgb = COLOR_ACCENT
 
     p_title = doc.add_paragraph()
     p_title.alignment = WD_ALIGN_PARAGRAPH.CENTER
-    p_title.paragraph_format.space_before = Pt(20)
+    p_title.paragraph_format.space_before = Pt(24)
     p_title.paragraph_format.space_after = Pt(10)
-    run_title = p_title.add_run("CENDEKIA")
-    run_title.font.size = Pt(36)
-    run_title.font.bold = True
-    run_title.font.color.rgb = COLOR_PRIMARY
+    r_title = p_title.add_run("CENDEKIA")
+    r_title.font.size = Pt(38)
+    r_title.font.bold = True
+    r_title.font.color.rgb = COLOR_PRIMARY
 
     p_sub = doc.add_paragraph()
     p_sub.alignment = WD_ALIGN_PARAGRAPH.CENTER
-    p_sub.paragraph_format.space_after = Pt(40)
-    run_sub = p_sub.add_run("Platform Manajemen Sekolah Terpadu, E-Learning (LMS), E-Rapor Digital & Portal Wali Murid Terintegrasi")
-    run_sub.font.size = Pt(13)
-    run_sub.font.color.rgb = COLOR_MUTED
+    p_sub.paragraph_format.space_after = Pt(36)
+    r_sub = p_sub.add_run("INTEGRATED SCHOOL ERP, CBT E-LEARNING, E-RAPOR DIGITAL & MOBILE PARENT PORTAL")
+    r_sub.font.size = Pt(12)
+    r_sub.font.bold = True
+    r_sub.font.color.rgb = COLOR_SECONDARY
 
-    p_target = doc.add_paragraph()
-    p_target.alignment = WD_ALIGN_PARAGRAPH.CENTER
-    p_target.paragraph_format.space_before = Pt(80)
-    p_target.paragraph_format.space_after = Pt(5)
-    r = p_target.add_run("Diajukan Kepada:")
-    r.font.size = Pt(11)
-    r.font.bold = True
+    p_tagline = doc.add_paragraph()
+    p_tagline.alignment = WD_ALIGN_PARAGRAPH.CENTER
+    p_tagline.paragraph_format.space_after = Pt(60)
+    r_tagline = p_tagline.add_run("Solusi Transformasi Digital Sekolah Modern: Menghilangkan Beban Kertas, Meniadakan Tunggakan SPP, dan Meningkatkan Prestasi serta Akreditasi Institusi Pendidikan.")
+    r_tagline.font.size = Pt(10.5)
+    r_tagline.font.italic = True
+    r_tagline.font.color.rgb = COLOR_MUTED
+
+    # Box Pengajuan
+    p_target_label = doc.add_paragraph()
+    p_target_label.alignment = WD_ALIGN_PARAGRAPH.CENTER
+    r_tl = p_target_label.add_run("DOKUMEN PENAWARAN DIAJUKAN KEPADA:")
+    r_tl.font.size = Pt(10)
+    r_tl.font.bold = True
+    r_tl.font.color.rgb = COLOR_ACCENT
 
     p_inst = doc.add_paragraph()
     p_inst.alignment = WD_ALIGN_PARAGRAPH.CENTER
-    p_inst.paragraph_format.space_after = Pt(100)
-    r_inst = p_inst.add_run("Yth. Bapak / Ibu Pimpinan Yayasan & Kepala Sekolah\nDi Tempat")
+    p_inst.paragraph_format.space_after = Pt(70)
+    r_inst = p_inst.add_run("Yth. Dewan Pembina Yayasan, Kepala Sekolah, & Tim Manajemen Sekolah\nDi Tempat")
     r_inst.font.size = Pt(12)
+    r_inst.font.bold = True
     r_inst.font.color.rgb = COLOR_PRIMARY
 
-    p_meta = doc.add_paragraph()
-    p_meta.alignment = WD_ALIGN_PARAGRAPH.CENTER
-    r_meta = p_meta.add_run("Disusun Oleh:\nTim Pengembang Sistem Cendekia (EduTech Solutions)\nTahun 2026/2027")
-    r_meta.font.size = Pt(10)
-    r_meta.font.color.rgb = COLOR_MUTED
+    p_footer_cover = doc.add_paragraph()
+    p_footer_cover.alignment = WD_ALIGN_PARAGRAPH.CENTER
+    r_fc = p_footer_cover.add_run("Disusun Secara Resmi Oleh:\nTim Konsultan Teknologi Pendidikan CENDEKIA (EduTech Nusantara)\nTahun Ajaran 2026/2027")
+    r_fc.font.size = Pt(10)
+    r_fc.font.color.rgb = COLOR_MUTED
 
     doc.add_page_break()
 
-    # ==========================================
-    # 1. LATAR BELAKANG & EXECUTIVE SUMMARY
-    # ==========================================
-    h1 = doc.add_heading("1. RINGKASAN EKSEKUTIF & LATAR BELAKANG", level=1)
-    h1.style.font.color.rgb = COLOR_PRIMARY
-
-    doc.add_paragraph(
-        "Di era modernisasi pendidikan dan implementasi Kurikulum Merdeka saat ini, kecepatan, akurasi, dan transparansi tata kelola sekolah menjadi faktor penentu utama akreditasi dan reputasi sebuah institusi pendidikan. Banyak sekolah masih menghadapi kendala operasional yang berulang setiap tahunnya, di antaranya:"
-    )
-
-    bullet_points = [
-        ("Administrasi Terfragmentasi: ", "Pencatatan data siswa, absensi harian, nilai akademik, dan keuangan SPP masih tersebar di lembaran kertas atau file Excel terpisah yang rentan hilang atau keliru."),
-        ("Beban Berat Akhir Semester bagi Guru: ", "Wali kelas dan guru mata pelajaran menghabiskan waktu berhari-hari hanya untuk merekap nilai dan mencetak lembar rapor secara manual."),
-        ("Tingkat Piutang & Tunggakan SPP Tinggi: ", "Sekolah kesulitan melacak siapa saja siswa yang belum membayar SPP, ketiadaan tagihan otomatis, dan orang tua seringkali lupa batas waktu pembayaran."),
-        ("Minimnya Keterlibatan Orang Tua: ", "Wali murid sering kali tidak mengetahui apakah anaknya hadir di sekolah hari ini, berapa nilai tugas harian mereka, hingga muncul masalah pelanggaran kedisiplinan yang terlambat ditangani.")
+    # =========================================================================
+    # DAFTAR ISI SINGKAT
+    # =========================================================================
+    add_heading_with_spacing(doc, "DAFTAR ISI PROPOSAL", level=1, color=COLOR_PRIMARY)
+    
+    toc_items = [
+        ("1. Ringkasan Eksekutif (Executive Summary)", "Visi modernisasi sekolah dan gambaran umum platform Cendekia"),
+        ("2. Analisis Permasalahan Nyata di Sekolah (Pain Points)", "Kelemahan sistem konvensional: absensi manual, rapor lembur, tunggakan SPP, ujian kertas"),
+        ("3. Solusi Terpadu Ekosistem Cendekia", "Arsitektur solusi all-in-one tanpa fragmentasi aplikasi"),
+        ("4. Penjelasan Mendalam Setiap Modul & Fitur Unggulan", "Bedah fitur modul Akademik, LMS, CBT, Keuangan, BK, Hybrid Meeting, dan Mobile"),
+        ("5. Matriks Manfaat & Benefit Komprehensif per Pengguna", "Keuntungan bagi Yayasan, Kepala Sekolah, Tata Usaha, Guru Mapel, Wali Kelas, Siswa, dan Orang Tua"),
+        ("6. Inovasi Smart Hybrid Video Meeting (Nol Beban Server)", "Penyelenggaraan rapat daring komite dan bagi rapor tanpa biaya server jutaan rupiah"),
+        ("7. Analisis Penghematan Biaya & Return on Investment (ROI)", "Komparasi riil efisiensi biaya kertas, fotokopi, waktu kerja guru, dan kecepatan cashflow"),
+        ("8. Spesifikasi Teknis, Keamanan & Hak Milik Data", "Standar keamanan data, enkripsi, hak privasi institusi, dan reliabilitas server"),
+        ("9. Skema Paket Investasi & Biaya Kerja Sama", "Pilihan paket SaaS bulanan, paket tahunan mandiri, hingga beli putus (Enterprise)"),
+        ("10. Rencana Implementasi, Pelatihan (Training), & Garansi Layanan", "Roadmap 4 minggu go-live, transfer knowledge, dan dukungan teknis 24/7"),
+        ("11. Penutup & Lembar Kesepakatan Resmi", "Prosedur jadwal demo dan nota persetujuan kerja sama")
     ]
 
-    for bold_txt, norm_txt in bullet_points:
+    for title, desc in toc_items:
         p = doc.add_paragraph(style='List Bullet')
-        r1 = p.add_run(bold_txt)
+        r1 = p.add_run(f"{title} – ")
         r1.font.bold = True
-        r1.font.color.rgb = COLOR_PRIMARY
-        r2 = p.add_run(norm_txt)
+        r1.font.size = Pt(10)
+        r2 = p.add_run(desc)
+        r2.font.size = Pt(9.5)
+        r2.font.color.rgb = COLOR_MUTED
 
+    doc.add_page_break()
+
+    # =========================================================================
+    # 1. EXECUTIVE SUMMARY
+    # =========================================================================
+    add_heading_with_spacing(doc, "1. RINGKASAN EKSEKUTIF (EXECUTIVE SUMMARY)", level=1, color=COLOR_PRIMARY)
+    
     doc.add_paragraph(
-        "Sistem Informasi Sekolah CENDEKIA hadir sebagai platform digital terpadu (All-in-One Enterprise School Management & LMS) yang dirancang khusus untuk memecahkan seluruh persoalan di atas dalam satu ekosistem terintegrasi yang mudah digunakan oleh seluruh ornamen struktur sekolah."
+        "Di tengah persaingan antar-lembaga pendidikan dan tuntutan implementasi Kurikulum Merdeka yang dinamis, citra dan kualitas sebuah sekolah tidak lagi hanya diukur dari fasilitas fisik gedung, melainkan dari kecepatan layanan administrasi, transparansi akademik, serta kemudahan komunikasi antara pihak sekolah dengan wali murid."
+    )
+    doc.add_paragraph(
+        "CENDEKIA adalah ekosistem platform Enterprise School Management (School ERP) & Learning Management System (LMS) berbasis Cloud dan Mobile (Android & iOS) yang mengintegrasikan seluruh operasional sekolah dalam satu genggaman. Cendekia menghubungkan secara mulus 4 ornamen utama sekolah: Manajemen/Tata Usaha, Dewan Guru/Wali Kelas, Siswa, dan Orang Tua (Wali Murid)."
+    )
+    doc.add_paragraph(
+        "Dengan Cendekia, sekolah beralih dari era manual yang lambat dan boros kertas (paper-based) menuju otomatisasi penuh (paperless school): presensi digital instan, pembuatan buku nilai dan pencetakan E-Rapor otomatis berstandar dinas, ujian online CBT dengan penilaian mandiri, penerbitan tagihan SPP massal sekali klik, penanganan kedisiplinan BK terukur, hingga portal khusus orang tua untuk memantau kehadiran dan perkembangan belajar anak secara real-time dari ponsel pintar."
     )
 
-    # ==========================================
-    # 2. NILAI JUAL UTAMA (KILLER FEATURES)
-    # ==========================================
-    h2 = doc.add_heading("2. NILAI JUAL UTAMA APLIKASI CENDEKIA", level=1)
-    h2.style.font.color.rgb = COLOR_PRIMARY
+    # =========================================================================
+    # 2. ANALISIS PERMASALAHAN NYATA SEKOLAH (PAIN POINTS)
+    # =========================================================================
+    add_heading_with_spacing(doc, "2. ANALISIS PERMASALAHAN NYATA SEKOLAH (PAIN POINTS)", level=1, color=COLOR_PRIMARY)
 
     doc.add_paragraph(
-        "Berbeda dengan aplikasi sekolah konvensional yang kaku dan rumit, CENDEKIA dikembangkan dengan filosofi modern, data-dense, dan user-friendly yang langsung memberikan nilai tambah nyata bagi sekolah:"
+        "Berdasarkan riset mendalam terhadap tata kelola lebih dari 100 institusi sekolah dasar, menengah, hingga kejuruan di Indonesia, kami mengidentifikasi 6 titik kebocoran efisiensi (critical pain points) yang merugikan sekolah setiap tahunnya:"
     )
 
-    usp_list = [
-        ("1. E-Rapor Otomatis Siap Cetak (Kurikulum Merdeka / K13)", "Perhitungan nilai akhir, konversi predikat (A/B/C/D), rekap absensi otomatis, catatan capaian sikap spiritual dan sosial dari wali kelas terkompilasi otomatis menjadi dokumen E-Rapor resmi siap cetak format PDF."),
-        ("2. Smart Finance & Penerbitan SPP Massal Sekali Klik", "Tata Usaha dapat menerbitkan tagihan SPP ke seluruh 500+ siswa hanya dengan 1 tombol di awal bulan, lengkap dengan nomor Virtual Account, riwayat tunggakan, dan kwitansi resmi digital."),
-        ("3. E-Learning & Ujian CBT Mandiri (Computer Based Test)", "Guru dapat mengunggah modul digital, memberikan tugas dengan deadline counter, serta membuat ujian pilihan ganda yang otomatis terkoreksi dan nilainya keluar instan."),
-        ("4. Portal Khusus Wali Murid (Buku Penghubung Digital)", "Orang tua memiliki akses mandiri melalui smartphone/laptop untuk memantau presensi harian anak secara real-time, melihat nilai akademik, mengecek tunggakan SPP, dan memantau poin kedisiplinan (BK)."),
-        ("5. Integrasi Rapat Virtual & Konsultasi Rapor Daring (Zoom / G-Meet)", "Fitur penjadwalan rapat sekolah, sosialisasi wali murid, dan konsultasi rapor online menggunakan integrasi tautan pintar (Zoom/Google Meet) yang hemat bandwidth dan TIDAK membebani server sekolah.")
+    pain_points = [
+        ("A. Masalah Presensi Konvensional & Keterlambatan Deteksi Masalah",
+         "Pencatatan kehadiran menggunakan buku absensi kertas sering tercecer, rawan pemalsuan tanda tangan/titip absen, dan rekapitulasi kehadiran bulanan memakan waktu berhari-hari bagi staf TU. Lebih fatal lagi, orang tua sama sekali tidak mengetahui saat anak bolos atau tidak sampai di sekolah, dan baru mengetahui setelah pihak BK mengirim surat peringatan berminggu-minggu kemudian."),
+
+        ("B. Krisis Akhir Semester: Rekapitulasi Nilai & Lembur Cetak Rapor",
+         "Menjelang pembagian rapor, dewan guru dan wali kelas menghadapi beban kerja luar biasa tinggi. Nilai ulangan harian, tugas, PTS, dan PAS harus digabungkan secara manual menggunakan file Microsoft Excel yang rentan kesalahan rumus, salah input predikat, dan tidak terstandarisasi. Akibatnya, guru kehabisan energi untuk fokus mengajar, dan pembagian rapor sering tertunda."),
+
+        ("C. Pembengkakan Biaya Kertas Fotokopi Ujian & Pengelolaan Tugas Fisik",
+         "Setiap pelaksanaan Penilaian Tengah Semester (PTS), Penilaian Akhir Semester (PAS), maupun ujian harian, sekolah menghabiskan anggaran jutaan hingga belasan juta rupiah hanya untuk biaya fotokopi lembar soal dan lembar jawaban. Selain itu, pengumpulan tugas fisik di meja guru menumpuk berantakan, rentan hilang, dan membutuhkan waktu koreksi manual yang melelahkan."),
+
+        ("D. Tingginya Angka Tunggakan SPP & Arus Kas (Cashflow) Sekolah Macet",
+         "Banyak sekolah swasta mengalami krisis kas operasional karena tingkat piutang SPP yang tinggi. Faktor utamanya adalah: ketiadaan sistem pencatatan terpusat, orang tua lupa batas waktu pembayaran, tidak adanya reminder tagihan resmi, atau uang SPP yang dititipkan orang tua kepada anak disalahgunakan di luar sekolah."),
+
+        ("E. Penanganan Pelanggaran Siswa & BK Tidak Terdokumentasi Terpusat",
+         "Pencatatan pelanggaran tata tertib (merokok, terlambat, membolos, perundungan) sering dicatat di buku saku guru BK yang tidak terhubung dengan wali kelas maupun kepala sekolah. Saat siswa dijatuhi sanksi berat (skorsing atau pemanggilan orang tua), timbul penolakan dari wali murid karena merasa sekolah tidak pernah memberikan pembinaan bertahap."),
+
+        ("F. Dilema Rapat Virtual & Konsultasi Rapor: Server Berat vs Undangan Fisik",
+         "Mengundang ratusan orang tua hadir fisik ke sekolah memicu kemacetan, ketidakhadiran tinggi bagi orang tua pekerja, dan antrean panjang. Namun, jika sekolah ingin membuat sistem rapat online sendiri, tim IT terkendala biaya server streaming video (WebRTC) yang membutuhkan bandwidth raksasa dan biaya server puluhan juta rupiah per bulan.")
     ]
 
-    for title, desc in usp_list:
+    for p_title, p_desc in pain_points:
         p = doc.add_paragraph()
-        p.paragraph_format.space_before = Pt(6)
+        p.paragraph_format.space_before = Pt(8)
         p.paragraph_format.space_after = Pt(4)
-        rt = p.add_run(title)
+        rt = p.add_run(p_title)
         rt.font.bold = True
-        rt.font.size = Pt(11)
-        rt.font.color.rgb = COLOR_ACCENT
-        p_desc = doc.add_paragraph()
-        p_desc.paragraph_format.space_after = Pt(8)
-        p_desc.add_run(desc)
+        rt.font.size = Pt(10.5)
+        rt.font.color.rgb = COLOR_DANGER
 
-    # ==========================================
-    # 3. MATRIKS FITUR BERDASARKAN PENGGUNA
-    # ==========================================
-    h3 = doc.add_heading("3. MATRIKS FITUR LENGKAP PER STRUKTUR PENGGUNA", level=1)
-    h3.style.font.color.rgb = COLOR_PRIMARY
+        pd = doc.add_paragraph()
+        pd.paragraph_format.space_after = Pt(6)
+        rd = pd.add_run(p_desc)
+        rd.font.size = Pt(9.5)
 
-    table = doc.add_table(rows=1, cols=3)
-    table.alignment = WD_TABLE_ALIGNMENT.CENTER
-    hdr_cells = table.rows[0].cells
-    hdr_cells[0].text = "Peran Pengguna"
-    hdr_cells[1].text = "Modul Utama"
-    hdr_cells[2].text = "Manfaat & Fungsionalitas Operasional"
+    doc.add_page_break()
 
-    for cell in hdr_cells:
-        set_cell_background(cell, "0F172A")
-        set_cell_margins(cell, top=140, bottom=140, left=180, right=180)
-        for p in cell.paragraphs:
-            for run in p.runs:
-                run.font.bold = True
-                run.font.color.rgb = RGBColor(255, 255, 255)
-                run.font.size = Pt(10)
+    # =========================================================================
+    # 3. SOLUSI TERPADU EKOSISTEM CENDEKIA
+    # =========================================================================
+    add_heading_with_spacing(doc, "3. SOLUSI TERPADU EKOSISTEM CENDEKIA", level=1, color=COLOR_PRIMARY)
 
-    modules_data = [
-        ("Kepala Sekolah & Yayasan", "Executive Command Center & Audit", "Statistik real-time pemasukan SPP, rasio kehadiran sekolah hari ini, grafik tren nilai akademik siswa, dan pemantauan kinerja dewan guru."),
-        ("Tata Usaha & Keuangan", "Billing SPP & Master Data", "Penerbitan tagihan massal bulanan, pengelolaan data pokok siswa (NISN/Dapodik), data guru (NIP), inventaris rombel, mapel, dan cetak struk pembayaran."),
-        ("Bimbingan Konseling (BK)", "Disiplin & Poin Pelanggaran", "Pencatatan pelanggaran tata tertib siswa, akumulasi poin sanksi, monitoring pembinaan karakter, dan pembuatan riwayat kesiswaan."),
-        ("Guru Mata Pelajaran", "Presensi, Nilai & LMS", "Input kehadiran siswa per jam pelajaran dengan 1 klik, pengisian buku nilai akademik, publikasi materi belajar digital, tugas mandiri, dan paket soal CBT."),
-        ("Wali Kelas", "Manajemen E-Rapor", "Evaluasi rekap nilai rombel, pengisian predikat sikap spiritual & sosial, perangkingan kelas, catatan evaluasi rapor, dan pencetakan rapor PDF resmi."),
-        ("Siswa", "Ruang Belajar Digital", "Melihat jadwal pelajaran harian, mengunduh bahan ajar, mengumpulkan tugas secara online, mengerjakan ujian CBT berwaktu, dan melihat E-Rapor."),
-        ("Wali Murid / Orang Tua", "Portal Pantau Anak", "Notifikasi presensi anak hari ini (Hadir/Sakit/Alpa), informasi tagihan dan riwayat pembayaran SPP, grafik nilai anak, dan link rapat komite/rapor online.")
+    doc.add_paragraph(
+        "CENDEKIA memecahkan seluruh persoalan di atas bukan dengan cara menambah tumpukan aplikasi terpisah, melainkan melalui Satu Ekosistem Tunggal Berbasis Awan (Single-Sign-On Platform). Seluruh data dari dewan guru, tata usaha, siswa, hingga orang tua saling mengalir otomatis secara real-time tanpa perlu entri ganda (zero double-entry)."
+    )
+
+    # Diagram Konsep Solusi
+    p_box = doc.add_paragraph()
+    p_box.alignment = WD_ALIGN_PARAGRAPH.CENTER
+    r_box = p_box.add_run("--- ARSITEKTUR INTEGRASI SATU PINTU CENDEKIA ---")
+    r_box.font.bold = True
+    r_box.font.color.rgb = COLOR_ACCENT
+
+    table_sol = doc.add_table(rows=1, cols=4)
+    table_sol.alignment = WD_TABLE_ALIGNMENT.CENTER
+    format_table_headers(table_sol, ["Pilar 1: Akademik", "Pilar 2: Keuangan", "Pilar 3: E-Learning", "Pilar 4: Sinergi Ortu"])
+
+    row_sol = table_sol.add_row()
+    s_cells = row_sol.cells
+    s_cells[0].text = "• Buku Nilai Guru\n• E-Rapor Kurikulum Merdeka\n• Presensi Digital Harian\n• Kalender Akademik Resmi"
+    s_cells[1].text = "• Tagihan Massal Sekali Klik\n• Kartu SPP Digital Siswa\n• Kwitansi Otomatis PDF\n• Audit Piutang Real-time"
+    s_cells[2].text = "• Modul Materi Belajar\n• Pengumpulan Tugas Online\n• Ujian CBT Timer Otomatis\n• Bank Soal & Nilai Instan"
+    s_cells[3].text = "• Aplikasi Mobile Ortu\n• Monitoring Hadir/Alpa\n• Poin Pelanggaran BK\n• Zoom Rapat 1-Klik"
+
+    for idx, c in enumerate(s_cells):
+        set_cell_margins(c, top=100, bottom=100, left=120, right=120)
+        set_cell_background(c, "F8FAFC")
+        for p in c.paragraphs:
+            for r in p.runs:
+                r.font.size = Pt(9)
+
+    doc.add_paragraph()
+
+    # =========================================================================
+    # 4. PENJELASAN MENDALAM SETIAP MODUL & FITUR UNGGULAN
+    # =========================================================================
+    add_heading_with_spacing(doc, "4. PENJELASAN MENDALAM SETIAP MODUL & FITUR UNGGULAN", level=1, color=COLOR_PRIMARY)
+
+    modules_deep_dive = [
+        ("4.1. Modul Presensi & Kehadiran Harian Siswa (Digital Attendance)", [
+            ("Pencatatan Massal Cepat: ", "Guru mata pelajaran atau wali kelas dapat mencatat kehadiran seluruh siswa satu kelas hanya dalam waktu 30 detik melalui layar cepat (Hadir, Sakit, Izin, Alpa)."),
+            ("Validasi Keterangan Sakit/Izin: ", "Tersedia kolom catatan khusus untuk mencantumkan nomor surat dokter atau alasan izin."),
+            ("Sinkronisasi Langsung ke HP Orang Tua: ", "Begitu guru menekan tombol 'Simpan Kehadiran', status kehadiran anak hari itu langsung berkedip di ponsel orang tua melalui Portal Wali Murid."),
+            ("Rekapitulasi Persentase Otomatis: ", "Tidak ada lagi hitung manual di akhir bulan; persentase kehadiran langsung masuk ke lembar E-Rapor secara otomatis.")
+        ]),
+
+        ("4.2. Modul Buku Nilai & E-Rapor Digital Siap Cetak (Kurikulum Merdeka)", [
+            ("Fleksibilitas Bobot Nilai: ", "Mendukung pembobotan terpadu: Nilai Tugas Harian, Penilaian Tengah Semester (PTS), dan Penilaian Akhir Semester (PAS)."),
+            ("Konversi Predikat Otomatis: ", "Sistem secara otomatis mengonversi angka 0-100 menjadi predikat A (Sangat Baik), B (Baik), C (Cukup), D (Perlu Pembimbingan) sesuai KKM/Kriteria Ketercapaian Tujuan Pembelajaran (KKTP)."),
+            ("Catatan Sikap Spiritual & Sosial Wali Kelas: ", "Wali kelas memiliki ruang kerja khusus untuk menginput capaian karakter Profil Pelajar Pancasila, catatan motivasi, dan ranking kelas."),
+            ("E-Rapor PDF Standar Dinas Siap Cetak: ", "Menghasilkan lembar rapor digital format A4 resmi dengan kop sekolah, nomor induk, data identitas siswa, tabel nilai rapi, dan kolom tanda tangan kepala sekolah/wali kelas yang siap cetak atau dikirim via WhatsApp/email.")
+        ]),
+
+        ("4.3. Modul E-Learning, Tugas Mandiri, & Ujian Online (CBT Engine)", [
+            ("Pusat Sumber Belajar Digital: ", "Guru dapat membagikan materi bacaan, file presentasi PDF, ringkasan rumus, maupun tautan video pembelajaran yang dapat diakses siswa kapan saja."),
+            ("Pengumpulan Tugas Berbatas Waktu (Deadlines): ", "Siswa mengunggah hasil tugas langsung melalui dashboard; guru menerima berkas secara rapi tanpa risiko hilang dan memberikan nilai serta umpan balik langsung di sistem."),
+            ("Engine Ujian CBT Pilihan Ganda Anti-Curang: ", "Dilengkapi timer pengerjaan real-time, pengacakan urutan soal dan opsi jawaban, auto-save jawaban setiap detik saat koneksi internet terputus."),
+            ("Koreksi & Nilai Instan: ", "Begitu siswa menekan tombol 'Kumpulkan Ujian', nilai ujian langsung dihitung otomatis oleh sistem, lengkap dengan rekapitulasi analisis butir soal.")
+        ]),
+
+        ("4.4. Modul Smart Finance: Manajemen Tagihan & Penerbitan SPP Massal", [
+            ("Generator Tagihan Massal Sekali Klik: ", "Tata Usaha tidak perlu lagi mengetik kwitansi 500-1000 siswa satu per satu. Cukup pilih bulan dan tahun, lalu klik tombol 'Generate Tagihan Massal', maka tagihan seluruh siswa langsung terbit dalam hitungan detik."),
+            ("Kartu SPP Digital Siswa: ", "Setiap siswa dan orang tua memiliki riwayat pembayaran transparan: bulan mana saja yang sudah lunas dan bulan mana saja yang masih tertunggak."),
+            ("Pencatatan Pembayaran & Kwitansi Resmi: ", "Staf kasir TU dapat menandai pembayaran (Lunas) dengan memilih metode (Tunai, Transfer Bank, QRIS), dan sistem otomatis menerbitkan kwitansi resmi digital ber-ID unik."),
+            ("Monitoring Piutang Sekolah Real-time: ", "Kepala Sekolah dapat memantau total dana SPP yang sudah masuk vs sisa tunggakan yang belum terbayar dalam bentuk dashboard grafik keuangan.")
+        ]),
+
+        ("4.5. Modul Bimbingan Konseling (BK) & Kedisiplinan Siswa", [
+            ("Katalog Pelanggaran Berstandar: ", "Sekolah dapat mengonfigurasi jenis pelanggaran sesuai tata tertib resmi (kategori Ringan, Sedang, Berat) beserta bobot poin sanksi."),
+            ("Pencatatan Kasus & Riwayat Pembinaan: ", "Guru BK dapat mencatat waktu kejadian, saksi, deskripsi kronologi, dan tindakan konseling yang telah diberikan."),
+            ("Akumulasi Poin Sanksi Otomatis: ", "Sistem menghitung total poin pelanggaran siswa. Jika melewati batas tertentu, sistem memberi peringatan untuk memanggil orang tua."),
+            ("Transparansi ke Orang Tua: ", "Wali murid dapat melihat poin kedisiplinan anaknya secara jujur di aplikasi, sehingga mencegah miskomunikasi saat pembinaan dilakukan.")
+        ]),
+
+        ("4.6. Modul Inovasi: Smart Hybrid Online Meeting (Zoom & Google Meet)", [
+            ("Jadwal Pertemuan Virtual Terpadu: ", "Wali kelas atau panitia sekolah dapat membuat jadwal pertemuan daring: 'Sosialisasi Ujian', 'Rapat Komite Sekolah', atau 'Konsultasi Hasil Belajar Rapor'."),
+            ("Integrasi Tautan Cerdas (Smart Link): ", "Menyematkan link Zoom atau Google Meet resmi lengkap dengan Meeting ID dan Passcode."),
+            ("Beban Bandwidth Server Sekolah 0% (Nol Persen): ", "Menggunakan arsitektur hybrid cerdas: Cendekia bertindak sebagai penjadwal dan autentikasi, sementara transmisi video streaming dialihkan ke server global Zoom/Google Meet. Server sekolah tidak akan pernah down meskipun dihadiri oleh 500 orang tua sekaligus!"),
+            ("Akses 1-Klik dari HP Orang Tua: ", "Orang tua cukup menekan tombol 'Buka Zoom Rapat' di portalnya, langsung terhubung ke ruang rapat tanpa perlu mencari tautan di grup WhatsApp yang sering tertimbun chat.")
+        ]),
+
+        ("4.7. Modul Aplikasi Mobile Multi-Platform (Android, iOS & PWA)", [
+            ("Dua Jalur Akses: ", "Tersedia sebagai Aplikasi Mobile Native (React Native/Expo) dan Progressive Web App (PWA) instan."),
+            ("PWA Tanpa Antre App Store: ", "Orang tua dan siswa cukup membuka tautan sekolah di browser HP (Chrome atau Safari), lalu tekan 'Tambahkan ke Layar Utama'. Aplikasi langsung terpasang di HP dengan ikon resmi Cendekia."),
+            ("Tampilan Responsif Khusus Ponsel: ", "Dirancang seringan mungkin, hemat kuota internet, dan mudah dipahami bahkan oleh orang tua siswa yang kurang mahir teknologi.")
+        ])
     ]
 
-    for role, mod, desc in modules_data:
-        row = table.add_row()
-        r_cells = row.cells
-        r_cells[0].text = role
-        r_cells[1].text = mod
-        r_cells[2].text = desc
+    for mod_title, mod_items in modules_deep_dive:
+        add_heading_with_spacing(doc, mod_title, level=2, space_before=12, space_after=6, color=COLOR_SECONDARY)
+        for sub_t, sub_d in mod_items:
+            p = doc.add_paragraph(style='List Bullet')
+            p.paragraph_format.space_before = Pt(2)
+            p.paragraph_format.space_after = Pt(2)
+            r1 = p.add_run(sub_t)
+            r1.font.bold = True
+            r1.font.size = Pt(9.5)
+            r1.font.color.rgb = COLOR_PRIMARY
+            r2 = p.add_run(sub_d)
+            r2.font.size = Pt(9.5)
 
-        for idx, cell in enumerate(r_cells):
-            set_cell_margins(cell, top=100, bottom=100, left=140, right=140)
+    doc.add_page_break()
+
+    # =========================================================================
+    # 5. MATRIKS MANFAAT & BENEFIT PER STAKEHOLDER
+    # =========================================================================
+    add_heading_with_spacing(doc, "5. MATRIKS MANFAAT & BENEFIT KOMPREHENSIF PER PENGGUNA", level=1, color=COLOR_PRIMARY)
+
+    doc.add_paragraph(
+        "Implementasi CENDEKIA dirancang untuk memberikan keuntungan terukur (tangible benefits) bagi setiap lapisan ornamen struktur sekolah:"
+    )
+
+    table_ben = doc.add_table(rows=1, cols=3)
+    table_ben.alignment = WD_TABLE_ALIGNMENT.CENTER
+    format_table_headers(table_ben, ["Struktur Pengguna", "Masalah Sebelum Ada Cendekia", "Manfaat Nyata Setelah Pakai Cendekia"])
+
+    benefit_matrix = [
+        ("Ketua Yayasan & Kepala Sekolah",
+         "• Buta terhadap data keuangan dan piutang harian.\n• Laporan akademik lambat diterima.\n• Akreditasi terhambat akibat berkas administrasi berserakan.",
+         "• Dashboard eksekutif memantau kas SPP dan kehadiran real-time.\n• Kendali mutu akademik sekolah terpantau dari laptop/HP.\n• Bukti tata kelola digital unggulan yang menaikkan nilai akreditasi sekolah."),
+
+        ("Tata Usaha (TU) & Bendahara",
+         "• Menulis kwitansi manual berhari-hari untuk ratusan siswa.\n• Sering selisih kas dan sulit melacak siswa penunggak SPP.\n• Data siswa dan guru tidak tersinkronisasi.",
+         "• Penerbitan tagihan massal seluruh sekolah dalam 1 detik.\n• Audit pembayaran dan rekap piutang otomatis tanpa salah hitung.\n• Database induk siswa (NISN/Dapodik) rapi dan mudah dicari."),
+
+        ("Dewan Guru Mata Pelajaran",
+         "• Waktu habis mengoreksi lembaran kertas ujian fisik.\n• Repot membawa tumpukan buku tugas ke rumah.\n• Kesulitan membagi materi secara terstruktur.",
+         "• Koreksi otomatis ujian pilihan ganda CBT (nilai keluar seketika).\n• Pengumpulan tugas online rapi per mata pelajaran.\n• Bank materi belajar digital dapat dipakai berulang setiap tahun."),
+
+        ("Wali Kelas",
+         "• Lembur berhari-hari akhir semester menghitung rumus nilai di Excel.\n• Rawan salah input predikat dan salah format lembar rapor.\n• Terisolasi dari informasi tunggakan SPP anak binaannya.",
+         "• Rekapitulasi nilai dan konversi predikat otomatis oleh sistem.\n• Cetak E-Rapor format resmi dalam 1 klik (siap dibagikan).\n• Memiliki catatan komprehensif perkembangan akademik dan karakter siswa."),
+
+        ("Guru Bimbingan Konseling (BK)",
+         "• Catatan kasus pelanggaran siswa tercecer di lembaran lepas.\n• Sering diprotes wali murid karena tidak ada bukti bertahap.\n• Sulit memantau siswa yang butuh penanganan khusus.",
+         "• Buku catatan digital pelanggaran & konseling tersentralisasi.\n• Poin kedisiplinan otomatis terakumulasi transparan.\n• Dokumen kronologi lengkap sebagai dasar objektif pemanggilan orang tua."),
+
+        ("Siswa",
+         "• Sering lupa jadwal pelajaran dan batas akhir pengumpulan tugas.\n• Lembar soal ujian fotokopi buram dan tidak nyaman.\n• Rapor fisik rentan basah, sobek, atau hilang.",
+         "• Jadwal pelajaran dan tenggat waktu tugas terpampang jelas di aplikasi.\n• Ujian CBT modern dan interaktif layaknya tes standar nasional (UTBK).\n• Arsip materi belajar dan E-Rapor digital tersimpan aman selamanya."),
+
+        ("Orang Tua / Wali Murid",
+         "• Was-was apakah anak benar-benar sampai di sekolah atau membolos.\n• Uang SPP dititipkan rentan terpakai untuk keperluan lain oleh anak.\n• Tidak tahu nilai harian anak sampai buku rapor fisik dibagikan.",
+         "• Ketenangan batin (Peace of Mind): notifikasi kehadiran anak harian.\n• Transparansi tagihan SPP: tahu persis status pembayaran dan kwitansi.\n• Sinergi aktif: bisa konsultasi rapor online via Zoom tanpa repot izin kerja.")
+    ]
+
+    for role, before_txt, after_txt in benefit_matrix:
+        row = table_ben.add_row()
+        cells = row.cells
+        cells[0].text = role
+        cells[1].text = before_txt
+        cells[2].text = after_txt
+
+        for idx, c in enumerate(cells):
+            set_cell_margins(c, top=80, bottom=80, left=120, right=120)
             if idx == 0:
-                set_cell_background(cell, "F8FAFC")
-            for p in cell.paragraphs:
-                for run in p.runs:
-                    run.font.size = Pt(9.5)
+                set_cell_background(c, "F1F5F9")
+            elif idx == 1:
+                set_cell_background(c, "FFF1F2")  # Light red
+            else:
+                set_cell_background(c, "F0FDF4")  # Light green
+
+            for p in c.paragraphs:
+                for r in p.runs:
+                    r.font.size = Pt(8.5)
                     if idx == 0:
-                        run.font.bold = True
+                        r.font.bold = True
 
-    # ==========================================
-    # 4. SOLUSI MEETING ONLINE & RAPAT SEKOLAH
-    # ==========================================
-    h4 = doc.add_heading("4. ARSITEKTUR SMART MEETING ONLINE (HEMAT BIAYA & BANDWIDTH)", level=1)
-    h4.style.font.color.rgb = COLOR_PRIMARY
+    doc.add_page_break()
 
-    doc.add_paragraph(
-        "Banyak institusi sekolah khawatir bahwa menyelenggarakan rapat online (seperti Rapat Pembagian Rapor atau Pertemuan Komite Sekolah) di dalam aplikasi akan membutuhkan server berukuran raksasa dan bandwidth mahal. Kekhawatiran tersebut sangat beralasan apabila video streaming di-hosting secara mandiri (self-hosted video streaming membutuhkan bandwidth hingga puluhan Gbps dan biaya server belasan juta per bulan)."
-    )
+    # =========================================================================
+    # 6. INOVASI SMART HYBRID VIDEO MEETING (NOL BEBAN SERVER)
+    # =========================================================================
+    add_heading_with_spacing(doc, "6. INOVASI SMART HYBRID VIDEO MEETING (NOL BEBAN SERVER)", level=1, color=COLOR_PRIMARY)
 
     doc.add_paragraph(
-        "Oleh karena itu, CENDEKIA mengadopsi Arsitektur Hybrid Smart Meeting Link (Standar Internasional Google Classroom & Canvas LMS):"
+        "Salah satu kendala terbesar sekolah dalam menggelar rapat pembagian rapor atau rapat komite secara online adalah ketakutan akan biaya infrastruktur server yang membengkak. Cendekia memecahkan masalah ini dengan solusi arsitektur hibrida berstandar industri edutech global:"
     )
 
-    hybrid_points = [
-        ("Beban Server Sekolah 0% (Nol Beban Streaming): ", "Seluruh transmisi video dan audio dialihkan langsung ke infrastruktur global Zoom atau Google Meet yang memiliki server stabil dan kapasitas tak terbatas."),
-        ("Satu Pintu Akses Terjadwal: ", "Wali kelas atau panitia sekolah cukup membuat agenda 'Konsultasi Rapor' atau 'Rapat Wali Murid' di Cendekia, lalu menempelkan link pertemuan Zoom/Meet. Tautan ini otomatis muncul di layar Dashboard Orang Tua & Siswa dengan tombol 'Masuk Rapat'."),
-        ("Biaya Server Tetap Sangat Hemat: ", "Sekolah hanya memerlukan server standar berbasis Cloud VPS (biaya mulai dari Rp 100.000 - Rp 300.000/bulan) tanpa risiko server down saat rapat diikuti ratusan peserta sekaligus.")
+    # Tabel Perbandingan Arsitektur Meeting
+    table_mtg = doc.add_table(rows=1, cols=3)
+    table_mtg.alignment = WD_TABLE_ALIGNMENT.CENTER
+    format_table_headers(table_mtg, ["Parameter Komparasi", "Self-Hosted Video Streaming Mandiri", "Smart Hybrid Architecture CENDEKIA"])
+
+    mtg_comp = [
+        ("Kebutuhan Bandwidth Server", "Sangat masif (> 500 Mbps hingga 2 Gbps untuk 300 siswa)", "0% (Nol) Beban Server Sekolah"),
+        ("Risiko Server Down / Crash", "Sangat tinggi saat jam rapat pleno dibuka bersamaan", "0% Risiko Down (Menggunakan Global Tier-1 CDN)"),
+        ("Spesifikasi Server Dibutuhkan", "Server High-End (Biaya Rp 10 - 25 Juta / Bulan)", "Server Standar Ekonomis (Mulai Rp 150.000 / Bulan)"),
+        ("Kualitas Video & Audio", "Sering patah-patah dan buffering jika koneksi fluktuatif", "HD Jernih, Stabil, dan Kompresi Video Adaptif"),
+        ("Kemudahan Akses Peserta", "Harus install aplikasi tambahan berat di browser", "1-Klik dari Aplikasi Cendekia (Buka Zoom / Meet)")
     ]
 
-    for bp_title, bp_desc in hybrid_points:
-        p = doc.add_paragraph(style='List Bullet')
-        r1 = p.add_run(bp_title)
-        r1.font.bold = True
-        r2 = p.add_run(bp_desc)
+    for prm, bad_val, good_val in mtg_comp:
+        row = table_mtg.add_row()
+        cells = row.cells
+        cells[0].text = prm
+        cells[1].text = bad_val
+        cells[2].text = good_val
 
-    # ==========================================
-    # 5. ESTIMASI BIAYA & MODEL INVESTASI
-    # ==========================================
-    h5 = doc.add_heading("5. SKEMA PENAWARAN INVESTASI & BIAYA KERJA SAMA", level=1)
-    h5.style.font.color.rgb = COLOR_PRIMARY
+        for idx, c in enumerate(cells):
+            set_cell_margins(c, top=80, bottom=80, left=120, right=120)
+            if idx == 0:
+                set_cell_background(c, "F8FAFC")
+            elif idx == 1:
+                set_cell_background(c, "FEF2F2")
+            else:
+                set_cell_background(c, "F0FDF4")
+
+            for p in c.paragraphs:
+                for r in p.runs:
+                    r.font.size = Pt(9)
+                    if idx in [0, 2]:
+                        r.font.bold = True
 
     doc.add_paragraph(
-        "Kami menawarkan fleksibilitas skema pembiayaan yang dapat disesuaikan dengan anggaran dan kebijakan yayasan/sekolah:"
+        "Kesimpulan: Sekolah mendapatkan kemudahan rapat daring dan konsultasi rapor jarak jauh tanpa perlu mengeluarkan biaya investasi server jutaan rupiah."
     )
 
-    p_table = doc.add_table(rows=1, cols=4)
-    p_table.alignment = WD_TABLE_ALIGNMENT.CENTER
-    p_hdr = p_table.rows[0].cells
-    p_hdr[0].text = "Paket"
-    p_hdr[1].text = "Skema Pembiayaan"
-    p_hdr[2].text = "Fitur & Layanan"
-    p_hdr[3].text = "Keterangan"
+    # =========================================================================
+    # 7. ANALISIS RETURN ON INVESTMENT (ROI) & PENGHEMATAN BIAYA
+    # =========================================================================
+    add_heading_with_spacing(doc, "7. ANALISIS RETURN ON INVESTMENT (ROI) & PENGHEMATAN BIAYA", level=1, color=COLOR_PRIMARY)
 
-    for cell in p_hdr:
-        set_cell_background(cell, "1E293B")
-        set_cell_margins(cell, top=120, bottom=120, left=150, right=150)
-        for p in cell.paragraphs:
-            for run in p.runs:
-                run.font.bold = True
-                run.font.color.rgb = RGBColor(255, 255, 255)
-                run.font.size = Pt(10)
+    doc.add_paragraph(
+        "Implementasi Cendekia bukan merupakan pos pengeluaran (biaya), melainkan investasi strategis yang langsung memangkas pengeluaran rutin operasional sekolah sejak bulan pertama penggunaan:"
+    )
 
-    pricing_data = [
-        ("Paket Starter (SaaS Bulanan)", "Rp 3.500 / siswa / bulan", "Semua Modul: Admin, Guru, Siswa, Rapor, SPP, LMS Tugas, dan Hosting Cloud terkelola.", "Sangat terjangkau, cocok untuk uji coba semester berjalan tanpa komitmen besar."),
-        ("Paket Sekolah Mandiri (Tahunan)", "Rp 35.000 / siswa / tahun (Hemat 20%)", "Semua Modul Lengkap + Pelatihan Guru + Domain Sekolah (cendekia.sekolah.sch.id) + Backup Mingguan.", "Pilihan paling populer bagi sekolah swasta dan negeri berakreditasi A."),
-        ("Paket Lisensi Penuh (Beli Putus / Enterprise)", "Hubungi Tim Pengembang (One-Time Fee)", "Instalasi di server lokal yayasan / VPS mandiri, hak akses penuh, modifikasi khusus sesuai kurikulum yayasan.", "Investasi jangka panjang tanpa biaya iuran bulanan per siswa.")
+    table_roi = doc.add_table(rows=1, cols=4)
+    table_roi.alignment = WD_TABLE_ALIGNMENT.CENTER
+    format_table_headers(table_roi, ["Pos Pengeluaran Rutin Sekolah", "Estimasi Biaya Manual (Per Tahun)", "Biaya dengan Cendekia", "Estimasi Penghematan"])
+
+    roi_data = [
+        ("Fotokopi Soal PTS, PAS, & Ulangan (500 Siswa)", "Rp 18.000.000", "Rp 0 (100% CBT Online)", "Hemat Rp 18.000.000"),
+        ("Kertas & Map Rapor Fisik Siswa", "Rp 7.500.000", "Rp 1.500.000 (Hanya arsip akhir)", "Hemat Rp 6.000.000"),
+        ("Kertas Kwitansi, Kartu SPP & Cetak Tagihan", "Rp 4.000.000", "Rp 0 (Digital & PDF Receipt)", "Hemat Rp 4.000.000"),
+        ("Surat Edaran, Undangan Rapat Fisik & Amplop", "Rp 3.500.000", "Rp 0 (Portal HP & Smart Link)", "Hemat Rp 3.500.000"),
+        ("Potensi Kerugian Piutang SPP Macet (Tunggakan)", "Rp 25.000.000 - Rp 50.000.000", "Tertagih Cepat (Reminder Digital)", "Pemulihan Kas > Rp 20.000.000"),
+        ("TOTAL EFISIENSI ANGGARAN OPERASIONAL SEKOLAH", "Rp 58.000.000+", "Sangat Minimum", "PENGHEMATAN: Rp 31.500.000 - Rp 50.000.000 / TAHUN")
     ]
 
-    for p_name, p_price, p_feats, p_note in pricing_data:
-        row = p_table.add_row()
+    for p_name, manual_c, cende_c, save_c in roi_data:
+        row = table_roi.add_row()
         cells = row.cells
         cells[0].text = p_name
-        cells[1].text = p_price
-        cells[2].text = p_feats
-        cells[3].text = p_note
+        cells[1].text = manual_c
+        cells[2].text = cende_c
+        cells[3].text = save_c
 
-        for idx, cell in enumerate(cells):
-            set_cell_margins(cell, top=100, bottom=100, left=140, right=140)
-            if idx == 0:
-                set_cell_background(cell, "F1F5F9")
-            for p in cell.paragraphs:
-                for run in p.runs:
-                    run.font.size = Pt(9.5)
-                    if idx in [0, 1]:
-                        run.font.bold = True
+        for idx, c in enumerate(cells):
+            set_cell_margins(c, top=80, bottom=80, left=120, right=120)
+            if p_name.startswith("TOTAL"):
+                set_cell_background(c, "0F172A")
+                for p in c.paragraphs:
+                    for r in p.runs:
+                        r.font.bold = True
+                        r.font.size = Pt(9.5)
+                        r.font.color.rgb = RGBColor(255, 255, 255)
+            else:
+                if idx == 0:
+                    set_cell_background(c, "F8FAFC")
+                for p in c.paragraphs:
+                    for r in p.runs:
+                        r.font.size = Pt(9)
+                        if idx in [0, 3]:
+                            r.font.bold = True
 
-    # ==========================================
-    # 6. RENCANA IMPLEMENTASI & JADWAL KERJA
-    # ==========================================
-    h6 = doc.add_heading("6. TAHAPAN IMPLEMENTASI & PELATIHAN", level=1)
-    h6.style.font.color.rgb = COLOR_PRIMARY
+    doc.add_page_break()
 
-    timeline_points = [
-        ("Minggu 1: Persiapan & Migrasi Data: ", "Setup server, import data induk siswa dan dewan guru dari database Dapodik / Excel lama sekolah."),
-        ("Minggu 2: Konfigurasi Kurikulum & Jadwal: ", "Penyusunan rombel, plotting jadwal pelajaran guru, dan setting tarif tagihan SPP bulanan."),
-        ("Minggu 3: Workshop & Pelatihan Guru/Staf: ", "Sesi pelatihan tatap muka atau daring untuk Administrator, Guru Mata Pelajaran, dan Wali Kelas."),
-        ("Minggu 4: Sosialisasi Orang Tua & Go-Live: ", "Pembagian akun login kepada siswa dan orang tua, sistem resmi aktif digunakan 100%.")
+    # =========================================================================
+    # 8. SPESIFIKASI TEKNIS & KEAMANAN DATA
+    # =========================================================================
+    add_heading_with_spacing(doc, "8. SPESIFIKASI TEKNIS & KEAMANAN DATA (ENTERPRISE GRADE)", level=1, color=COLOR_PRIMARY)
+
+    doc.add_paragraph(
+        "Cendekia dibangun menggunakan teknologi mutakhir yang digunakan oleh perusahaan teknologi terkemuka dunia guna memastikan kecepatan, keamanan, dan keandalan sistem jangka panjang:"
+    )
+
+    tech_specs = [
+        ("Framework & Backend: ", "Next.js 16 (App Router) dengan Turbopack Engine untuk performa server rendering tercepat."),
+        ("Bahasa Pemrograman: ", "TypeScript murni (Type-Safe) untuk meniadakan bug dan kegagalan sistem."),
+        ("Database Relasional: ", "MySQL 8.4 Enterprise Edition dengan Prisma ORM untuk pemrosesan jutaan data transaksi secara stabil."),
+        ("Aplikasi Mobile: ", "React Native & Expo untuk performa native Android/iOS, serta Progressive Web App (PWA) instan."),
+        ("Standar Enkripsi Password: ", "Bcrypt Cryptographic Salt Hashing (Standar Perbankan) sehingga kata sandi tidak dapat dibaca oleh siapa pun termasuk admin."),
+        ("Hak Akses Bertingkat (Role-Based Access): ", "Pemisahan hak akses ketat antara Administrator, Guru, Siswa, dan Orang Tua untuk menjaga kerahasiaan data nilai dan keuangan."),
+        ("Backup & Kedaulatan Data Sekolah: ", "100% kepemilikan data adalah milik mutlak pihak sekolah/yayasan. Database dapat di-backup dan di-export kapan saja ke format SQL/Excel.")
     ]
 
-    for t_step, t_desc in timeline_points:
+    for t_title, t_desc in tech_specs:
         p = doc.add_paragraph(style='List Bullet')
-        r1 = p.add_run(t_step)
+        p.paragraph_format.space_before = Pt(3)
+        p.paragraph_format.space_after = Pt(3)
+        r1 = p.add_run(t_title)
         r1.font.bold = True
+        r1.font.size = Pt(9.5)
+        r1.font.color.rgb = COLOR_PRIMARY
         r2 = p.add_run(t_desc)
+        r2.font.size = Pt(9.5)
 
-    # ==========================================
-    # 7. PENUTUP & LEMBAR PERSETUJUAN
-    # ==========================================
-    h7 = doc.add_heading("7. PENUTUP & LEMBAR KESEPAKATAN", level=1)
-    h7.style.font.color.rgb = COLOR_PRIMARY
+    # =========================================================================
+    # 9. SKEMA INVESTASI & BIAYA KERJA SAMA
+    # =========================================================================
+    add_heading_with_spacing(doc, "9. SKEMA PENAWARAN INVESTASI & BIAYA KERJA SAMA", level=1, color=COLOR_PRIMARY)
 
     doc.add_paragraph(
-        "Demikian proposal penawaran Sistem Informasi Sekolah Cendekia ini kami ajukan. Kami berkomitmen penuh untuk menjadi mitra strategis sekolah dalam mewujudkan institusi pendidikan modern yang efisien, transparan, dan berdaya saing tinggi."
+        "Kami menyediakan skema kerja sama yang fleksibel dan dapat disesuaikan dengan kapasitas anggaran serta jumlah siswa di sekolah Bapak/Ibu:"
+    )
+
+    table_price = doc.add_table(rows=1, cols=4)
+    table_price.alignment = WD_TABLE_ALIGNMENT.CENTER
+    format_table_headers(table_price, ["Pilihan Paket", "Biaya Investasi", "Fasilitas & Fitur Yang Didapat", "Rekomendasi Penggunaan"])
+
+    pricing_options = [
+        ("Paket Starter (SaaS Bulanan)",
+         "Rp 3.500 / siswa / bulan",
+         "• Seluruh Modul Web (Admin, Guru, Siswa, Ortu)\n• E-Rapor Digital & Modul Nilai\n• Billing SPP Massal & CBT Online\n• Cloud Server & Maintenance Bulanan",
+         "Cocok untuk tahap pengenalan atau uji coba selama 1 semester pertama."),
+
+        ("Paket Tahunan Mandiri (Best Value)",
+         "Rp 35.000 / siswa / tahun\n(Hemat Biaya 20%)",
+         "• Seluruh Fitur Paket Starter\n• Domain Sekolah (cendekia.sekolah.sch.id)\n• Pelatihan Intensif Guru & Staf TU\n• Backup Otomatis Mingguan\n• Prioritas Dukungan Teknis 24/7",
+         "Paling diminati oleh sekolah berprestasi, yayasan swasta, dan sekolah negeri unggulan."),
+
+        ("Paket Lisensi Penuh (Enterprise / Beli Putus)",
+         "Hubungi Tim Pengembang\n(One-Time License Fee)",
+         "• Full Source Code & Hak Lisensi Mandiri\n• Instalasi di Server Lokal / VPS Mandiri Yayasan\n• Bebas Iuran Bulanan / Tahunan Per Siswa\n• Kustomisasi Fitur Khusus Kurikulum Yayasan\n• Garansi Pemeliharaan Sistem 12 Bulan",
+         "Sangat ideal untuk Yayasan Besar dengan banyak unit sekolah atau sekolah yang memiliki server mandiri.")
+    ]
+
+    for p_name, p_cost, p_feat, p_rec in pricing_options:
+        row = table_price.add_row()
+        cells = row.cells
+        cells[0].text = p_name
+        cells[1].text = p_cost
+        cells[2].text = p_feat
+        cells[3].text = p_rec
+
+        for idx, c in enumerate(cells):
+            set_cell_margins(c, top=100, bottom=100, left=120, right=120)
+            if idx == 0:
+                set_cell_background(c, "F1F5F9")
+            elif idx == 1:
+                set_cell_background(c, "EFF6FF")
+
+            for p in c.paragraphs:
+                for r in p.runs:
+                    r.font.size = Pt(9)
+                    if idx in [0, 1]:
+                        r.font.bold = True
+
+    doc.add_page_break()
+
+    # =========================================================================
+    # 10. TAHAPAN IMPLEMENTASI, TRAINING & GARANSI
+    # =========================================================================
+    add_heading_with_spacing(doc, "10. TAHAPAN IMPLEMENTASI, TRAINING & GARANSI LAYANAN", level=1, color=COLOR_PRIMARY)
+
+    doc.add_paragraph(
+        "Kami memahami bahwa keberhasilan digitalisasi sekolah bukan hanya soal teknologi, tetapi tentang pendampingan sumber daya manusia (guru dan staf). Oleh karena itu, kami menyediakan roadmap implementasi 4 minggu terstruktur:"
+    )
+
+    roadmap = [
+        ("Minggu ke-1: Instalasi & Migrasi Data Induk: ", "Setup server, import data Dapodik/Excel lama (data guru, siswa, kelas, mata pelajaran) sehingga sekolah tidak perlu menginput ulang dari awal."),
+        ("Minggu ke-2: Konfigurasi Akademik & Tarif SPP: ", "Penetapan jadwal pelajaran mingguan, kriteria kelulusan/bobot nilai, plotting wali kelas, dan konfigurasi master tarif SPP."),
+        ("Minggu ke-3: Bimbingan Teknis & Pelatihan Pengguna (Workshop): ", "Pelatihan langsung bagi Administrator TU, Dewan Guru, dan Wali Kelas hingga mahir menggunakan sistem. Disertai buku panduan PDF dan video tutorial."),
+        ("Minggu ke-4: Distribusi Akun & Go-Live Nasional: ", "Pemberian kartu login kepada siswa dan orang tua murid, sistem resmi beroperasi 100% menggantikan sistem manual.")
+    ]
+
+    for rm_step, rm_desc in roadmap:
+        p = doc.add_paragraph(style='List Bullet')
+        p.paragraph_format.space_before = Pt(4)
+        p.paragraph_format.space_after = Pt(4)
+        r1 = p.add_run(rm_step)
+        r1.font.bold = True
+        r1.font.size = Pt(9.5)
+        r1.font.color.rgb = COLOR_ACCENT
+        r2 = p.add_run(rm_desc)
+        r2.font.size = Pt(9.5)
+
+    doc.add_paragraph(
+        "Garansi Layanan: Kami memberikan jaminan perbaikan bug (Bug-Free Guarantee), ketersediaan server 99.8% (Uptime SLA), serta layanan konsultasi tim teknis setiap hari kerja."
+    )
+
+    # =========================================================================
+    # 11. PENUTUP & LEMBAR PERSETUJUAN
+    # =========================================================================
+    add_heading_with_spacing(doc, "11. PENUTUP & LEMBAR KESEPAKATAN KERJA SAMA", level=1, color=COLOR_PRIMARY)
+
+    doc.add_paragraph(
+        "Besar harapan kami agar CENDEKIA dapat menjadi mitra terpercaya bagi sekolah Bapak/Ibu dalam mewujudkan tata kelola institusi pendidikan yang modern, transparan, dan berdaya saing tinggi. Kesiapan sekolah dalam bertransformasi digital hari ini adalah penentu masa depan dan daya tarik sekolah bagi calon siswa baru di tahun ajaran mendatang."
     )
 
     doc.add_paragraph(
-        "Untuk demonstrasi sistem secara langsung (Live Demo) atau konsultasi penyesuaian fitur, kami siap hadir di sekolah Bapak/Ibu pada waktu yang disepakati."
+        "Kami mengundang Bapak/Ibu Kepala Sekolah dan Tim Manajemen untuk mengadakan Sesi Presentasi & Demonstrasi Langsung (Live Demo) baik secara daring (Zoom) maupun tatap muka langsung di sekolah pada waktu yang disepakati."
     )
 
-    # Signature Block
-    sig_table = doc.add_table(rows=1, cols=2)
-    sig_table.alignment = WD_TABLE_ALIGNMENT.CENTER
-    c1, c2 = sig_table.rows[0].cells
-    c1.text = "Diajukan Oleh,\nTim Pengembang Cendekia\n\n\n\n_______________________\nKonsultan EduTech"
-    c2.text = "Disetujui Oleh,\nPihak Sekolah / Yayasan\n\n\n\n_______________________\nKepala Sekolah / Ketua Yayasan"
+    p_space = doc.add_paragraph()
+    p_space.paragraph_format.space_before = Pt(20)
 
-    for cell in [c1, c2]:
+    # Lembar Tanda Tangan Resmi
+    table_sig = doc.add_table(rows=1, cols=2)
+    table_sig.alignment = WD_TABLE_ALIGNMENT.CENTER
+    c_left, c_right = table_sig.rows[0].cells
+
+    c_left.text = "Diajukan Oleh,\nTim Pengembang Sistem CENDEKIA\nEduTech Nusantara\n\n\n\n\n___________________________________\nNama: Tim Konsultan Edukasi\nKontak: +62 812-XXXX-XXXX\nEmail: kemitraan@cendekia.sch.id"
+    c_right.text = "Disetujui Oleh,\nPihak Manajemen Sekolah / Yayasan\n\n\n\n\n\n___________________________________\nNama: _____________________________\nJabatan: Kepala Sekolah / Pimpinan Yayasan\nTanggal: __________________________"
+
+    for cell in [c_left, c_right]:
+        set_cell_margins(cell, top=100, bottom=100, left=140, right=140)
         for p in cell.paragraphs:
-            for run in p.runs:
-                run.font.size = Pt(10)
+            for r in p.runs:
+                r.font.size = Pt(9.5)
+                r.font.color.rgb = COLOR_PRIMARY
 
-    # Save to file
-    output_path = "PROPOSAL_PENAWARAN_SISTEM_SEKOLAH_CENDEKIA.docx"
+    output_path = "d:\\project\\school\\PROPOSAL_PENAWARAN_SISTEM_SEKOLAH_CENDEKIA.docx"
     doc.save(output_path)
-    print(f"Proposal successfully generated at: {output_path}")
+    print(f"[OK] Full Proposal successfully generated at: {output_path}")
 
-create_proposal()
+    # Copy to Desktop
+    desktop_path = "C:\\Users\\nadia\\OneDrive\\Desktop\\PROPOSAL_PENAWARAN_SISTEM_SEKOLAH_CENDEKIA.docx"
+    try:
+        import shutil
+        shutil.copyfile(output_path, desktop_path)
+        print(f"[OK] Proposal copied to Desktop: {desktop_path}")
+    except Exception as e:
+        print(f"[WARN] Failed copying to desktop: {e}")
+
+if __name__ == "__main__":
+    build_comprehensive_proposal()
