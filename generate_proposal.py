@@ -514,36 +514,36 @@ def build_comprehensive_proposal():
     add_heading_with_spacing(doc, "9. SKEMA PENAWARAN INVESTASI & BIAYA KERJA SAMA", level=1, color=COLOR_PRIMARY)
 
     doc.add_paragraph(
-        "Banyak institusi sekolah merasa terbebani apabila harus membayar biaya pengadaan sistem teknologi informasi dengan nominal puluhan juta rupiah di awal tahun ajaran. Hal tersebut sering kali memicu penolakan dari pihak yayasan atau benturan dengan pos anggaran tahunan yang sudah terkunci."
+        "Banyak institusi sekolah merasa ragu ketika harus berinvestasi pada sistem informasi baru karena kekhawatiran akan beban biaya pengadaan awal yang sangat tinggi (mencapai Rp 35 - 50 juta). Hal tersebut sering kali membebani kas yayasan dan terbentur pada pos anggaran tahunan yang belum dianggarkan."
     )
     doc.add_paragraph(
-        "Oleh karena itu, CENDEKIA mengadopsi model kemitraan strategis: 'BIAYA AWAL RINGAN + MAINTENANCE BULANAN TERJANGKAU' (Low Barrier Onboarding & Managed Cloud Retainer). Dengan skema ini, sekolah TIDAK PERLU mengeluarkan modal besar di awal, melainkan hanya membayar biaya aktivasi terjangkau dan biaya pemeliharaan berkala yang sangat mudah dialokasikan dari anggaran operasional berjalan (Dana BOS maupun komite sekolah)."
+        "CENDEKIA menghadirkan solusi penganggaran yang proporsional, realistis, dan berkelas enterprise melalui skema: 'BIAYA SETUP TERJANGKAU + MANAGED MAINTENANCE BERKALA'. Dengan model ini, sekolah dapat langsung menikmati sistem digital grade-A tanpa menguras kas modal di awal, sementara kelangsungan performa server, keamanan data, dan pendampingan teknis dijamin penuh melalui biaya pemeliharaan berkala yang sangat terjangkau bagi operasional sekolah."
     )
 
     table_price = doc.add_table(rows=1, cols=4)
     table_price.alignment = WD_TABLE_ALIGNMENT.CENTER
-    format_table_headers(table_price, ["Pilihan Skema Kerja Sama", "Biaya Investasi Awal & Bulanan", "Cakupan Layanan & Fasilitas", "Nilai Keunggulan Bagi Sekolah"])
+    format_table_headers(table_price, ["Pilihan Skema Paket", "Investasi Setup & Maintenance", "Cakupan Layanan & Fasilitas Sistem", "Nilai Strategis Bagi Sekolah"])
 
     pricing_options = [
-        ("PAKET SMART PARTNERSHIP\n(Rekomendasi Utama - Paling Diminati)",
-         "• Biaya Setup Awal: Rp 1.500.000 (1x bayar)\n• Maintenance: Rp 490.000 / bulan (Flat)",
-         "• Setup Cloud Server & Database Sekolah\n• Migrasi Data Siswa dari Dapodik / Excel\n• Pelatihan (Workshop) Guru & Staf TU\n• Seluruh Modul Web & Mobile Lengkap\n• Cloud Hosting & Backup Mingguan Otomatis\n• Bantuan Teknis Pendampingan via WhatsApp",
-         "Sangat meringankan beban sekolah di awal! Biaya bulanan setara pembelian kertas 2 rim, namun seluruh operasional sekolah otomatis terdigitalisasi."),
+        ("PAKET STANDARD\n(Kapasitas s.d 400 Siswa)",
+         "• Setup & Onboarding: Rp 4.500.000 (1x di awal)\n• Maintenance: Rp 1.250.000 / bulan\n(atau Rp 3.750.000 / triwulan)",
+         "• Setup Server Cloud & Basis Data Sekolah\n• Migrasi Data Siswa dari Dapodik / Excel\n• Pelatihan (Workshop) Guru & Staf TU\n• Seluruh Modul Web & Mobile Lengkap\n• Cloud Hosting & Backup Mingguan Otomatis\n• Bantuan Teknis Pendampingan via WhatsApp",
+         "Sangat ideal untuk sekolah menengah yang ingin langsung beralih ke era paperless dengan anggaran yang sangat efisien dan terukur."),
 
-        ("PAKET PER-SISWA (FLEXIBLE SCALE)\n(Ideal untuk Sekolah Berkembang)",
-         "• Biaya Setup Awal: Rp 1.000.000 (1x bayar)\n• Maintenance: Rp 2.500 / siswa / bulan",
-         "• Seluruh Fasilitas Paket Smart Partnership\n• Biaya menyesuaikan jumlah siswa aktif riil\n• Akses penuh Portal Siswa & Wali Murid\n• Integrasi CBT Exam & E-Rapor Digital",
-         "Sangat adil dan proporsional. Sekolah dapat menyisihkan dari iuran pengembangan siswa (misal Rp 5.000/siswa/bulan), sehingga kas sekolah justru surplus."),
+        ("PAKET PRO UNGGULAN\n(Rekomendasi Utama – Kapasitas 400-1.000 Siswa)",
+         "• Setup & Onboarding: Rp 6.500.000 (1x di awal)\n• Maintenance: Rp 2.250.000 / bulan\n(atau Rp 6.750.000 / triwulan)",
+         "• Seluruh Fasilitas Paket Standard\n• Dedicated Cloud Server High-Performance (CBT Massal Serentak)\n• Domain Resmi (cendekia.sekolah.sch.id)\n• Pelatihan Lanjutan & Evaluasi Semesteran\n• Pendampingan Khusus saat Pembagian E-Rapor\n• Backup Harian Terenkripsi",
+         "Pilihan paling diminati sekolah favorit & berprestasi. Menjamin ujian CBT serentak tanpa kendala antrean serta citra digital sekolah yang sangat prestisius."),
 
-        ("PAKET TAHUNAN HEMAT\n(Efisiensi Maksimal 1 Tahun Ajaran)",
-         "• Setup: GRATIS (Promo)\n• Maintenance: Rp 4.900.000 / tahun (Hemat 2 Bulan)",
-         "• Seluruh Fasilitas Paket Smart Partnership\n• Domain Sekolah (cendekia.sekolah.sch.id)\n• Pelatihan Tambahan Guru Semester 2\n• Garansi Pemeliharaan Penuh 12 Bulan",
-         "Praktis untuk sekolah dengan penganggaran tahunan BOS. Sekolah menghemat biaya 2 bulan maintenance dan bebas biaya setup."),
+        ("PAKET FLEKSIBEL PER-SISWA\n(SaaS Berbasis Iuran Fasilitas Siswa)",
+         "• Setup & Onboarding: Rp 3.500.000 (1x di awal)\n• Retainer: Rp 5.000 / siswa / bulan",
+         "• Seluruh Fitur Lengkap Tanpa Batas\n• Biaya proporsional sesuai jumlah siswa riil\n• Akun siswa & orang tua aktif mandiri\n• Kartu SPP Digital & Integrasi Zoom",
+         "Sangat populer bagi sekolah swasta. Sekolah dapat mengalokasikan dari iuran komputer/pengembangan siswa (misal Rp 10.000/siswa/bulan), sehingga sekolah justru memperoleh SURPLUS kas operasional."),
 
-        ("PAKET ENTERPRISE (BELI PUTUS)\n(Lisensi Mandiri Yayasan)",
-         "Hubungi Tim Pengembang\n(One-Time License Fee)",
-         "• Full Source Code & Hak Lisensi Mandiri\n• Instalasi di Server Lokal / VPS Mandiri Yayasan\n• Bebas Biaya Langganan Bulanan Selamanya\n• Kustomisasi Khusus Kurikulum Yayasan",
-         "Pilihan terbaik bagi yayasan berskala besar yang mengelola banyak cabang sekolah dan memiliki divisi IT internal.")
+        ("PAKET ENTERPRISE LISENSI PENUH\n(Beli Putus Yayasan Multi-Unit)",
+         "• Investasi Lisensi: Rp 45.000.000 s/d Rp 65.000.000 (One-Time)\n• Maintenance Opsional: Rp 1.500.000 / bulan",
+         "• Full Source Code & Hak Lisensi Penuh Yayasan\n• Deployment di Server Lokal / VPS Mandiri Yayasan\n• Bebas Biaya Langganan Bulanan Selamanya\n• Kustomisasi Khusus Kurikulum Yayasan\n• Garansi Pemeliharaan Sistem 12 Bulan Penuh",
+         "Pilihan terbaik bagi yayasan besar yang menaungi beberapa unit sekolah sekaligus (SD, SMP, SMA/SMK) dan menghendaki kedaulatan server mandiri.")
     ]
 
     for p_name, p_cost, p_feat, p_rec in pricing_options:
@@ -558,7 +558,7 @@ def build_comprehensive_proposal():
             set_cell_margins(c, top=100, bottom=100, left=120, right=120)
             if idx == 0:
                 if "Rekomendasi Utama" in p_name:
-                    set_cell_background(c, "FEF3C7")  # Warm Amber highlight
+                    set_cell_background(c, "FEF3C7")  # Amber highlight
                 else:
                     set_cell_background(c, "F1F5F9")
             elif idx == 1:
@@ -570,7 +570,13 @@ def build_comprehensive_proposal():
                     if idx in [0, 1]:
                         r.font.bold = True
 
-    add_heading_with_spacing(doc, "9.1. Apa Saja yang Didapat Sekolah dari Biaya Maintenance Bulanan?", level=2, space_before=14, space_after=6, color=COLOR_SECONDARY)
+    add_heading_with_spacing(doc, "9.1. Fleksibilitas Termin Pembayaran: Mengikuti Siklus Pencairan Dana BOS", level=2, space_before=14, space_after=6, color=COLOR_SECONDARY)
+
+    doc.add_paragraph(
+        "Untuk memudahkan tata kelola administrasi bendahara sekolah, sistem pembayaran biaya pemeliharaan (maintenance) tidak harus dibayarkan setiap 30 hari, melainkan dapat dibayarkan per Triwulan (3 bulan sekali) atau per Semester (6 bulan sekali) mengikuti jadwal pencairan resmi Dana Bantuan Operasional Sekolah (BOS) atau termin penerimaan SPP yayasan."
+    )
+
+    add_heading_with_spacing(doc, "9.2. Apa Saja yang Didapat Sekolah dari Biaya Maintenance Berkala?", level=2, space_before=12, space_after=6, color=COLOR_SECONDARY)
     
     maint_items = [
         ("Cloud Infrastructure 24/7 & Uptime 99.8%: ", "Sekolah tidak perlu membeli komputer server fisik yang bising, menyewa IP statis, atau membayar listrik cadangan (UPS). Seluruh sistem aktif di awan dan dapat diakses 24 jam nonstop."),
@@ -591,10 +597,10 @@ def build_comprehensive_proposal():
         r2 = p.add_run(m_desc)
         r2.font.size = Pt(9.5)
 
-    add_heading_with_spacing(doc, "9.2. Kesesuaian Alokasi Pembiayaan dengan Petunjuk Teknis Dana BOS", level=2, space_before=12, space_after=6, color=COLOR_SECONDARY)
+    add_heading_with_spacing(doc, "9.3. Kesesuaian Alokasi Pembiayaan dengan Petunjuk Teknis Dana BOS", level=2, space_before=12, space_after=6, color=COLOR_SECONDARY)
 
     doc.add_paragraph(
-        "Bagi sekolah penerima Dana Bantuan Operasional Sekolah (BOS Reguler / Kinerja), biaya pemeliharaan bulanan sistem Cendekia merupakan belanja operasional yang 100% SAH dan LEGAL sesuai dengan Peraturan Menteri Pendidikan, Kebudayaan, Riset, dan Teknologi (Permendikbudristek) tentang Petunjuk Teknis Pengelolaan Dana BOS, yaitu pada komponen:"
+        "Bagi sekolah penerima Dana Bantuan Operasional Sekolah (BOS Reguler / Kinerja), biaya pemeliharaan berkala sistem Cendekia merupakan belanja operasional yang 100% SAH dan LEGAL sesuai dengan Peraturan Menteri Pendidikan, Kebudayaan, Riset, dan Teknologi (Permendikbudristek) tentang Petunjuk Teknis Pengelolaan Dana BOS, yaitu pada komponen:"
     )
 
     bos_points = [
