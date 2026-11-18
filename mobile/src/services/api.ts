@@ -1,7 +1,6 @@
 // Konfigurasi IP Backend Cendekia
-// Untuk Android Emulator gunakan http://10.0.2.2:3000
-// Untuk HP Fisik via WiFi gunakan IP komputer (misal: http://192.168.1.X:3000)
-export const BASE_API_URL = "http://10.0.2.2:3000";
+// Menggunakan IP lokal komputer agar bisa diakses langsung oleh HP fisik di jaringan WiFi yang sama
+export const BASE_API_URL = "http://192.168.50.49:3000";
 
 export async function loginApi(email: string, password: string) {
   try {
