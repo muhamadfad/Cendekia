@@ -525,25 +525,25 @@ def build_comprehensive_proposal():
     format_table_headers(table_price, ["Pilihan Skema Paket", "Investasi Setup & Maintenance", "Cakupan Layanan & Fasilitas Sistem", "Nilai Strategis Bagi Sekolah"])
 
     pricing_options = [
-        ("PAKET STANDARD\n(Kapasitas s.d 400 Siswa)",
-         "• Setup & Onboarding: Rp 4.500.000 (1x di awal)\n• Maintenance: Rp 1.250.000 / bulan\n(atau Rp 3.750.000 / triwulan)",
-         "• Setup Server Cloud & Basis Data Sekolah\n• Migrasi Data Siswa dari Dapodik / Excel\n• Pelatihan (Workshop) Guru & Staf TU\n• Seluruh Modul Web & Mobile Lengkap\n• Cloud Hosting & Backup Mingguan Otomatis\n• Bantuan Teknis Pendampingan via WhatsApp",
-         "Sangat ideal untuk sekolah menengah yang ingin langsung beralih ke era paperless dengan anggaran yang sangat efisien dan terukur."),
+        ("PAKET STANDARD (SEKOLAH MENENGAH)\n(Kapasitas s.d 400 Siswa)",
+         "• Setup & Onboarding: Rp 12.500.000 (1x di awal)\n• Maintenance & Cloud SLA: Rp 2.750.000 / bulan\n(atau Rp 8.250.000 / triwulan)",
+         "• Deployment Server Cloud & Basis Data Sekolah Terisolasi\n• Migrasi Data Siswa & Guru dari Dapodik / Excel\n• Workshop Pelatihan Tatap Muka 2 Hari Guru & Staf TU\n• Seluruh Modul Web & Mobile Lengkap (4 Peran)\n• Cloud Hosting Uptime 99.8% & Backup Mingguan Otomatis\n• Bantuan Teknis Prioritas via WhatsApp Group",
+         "Sangat ideal bagi sekolah menengah yang ingin langsung beralih ke digitalisasi penuh dengan biaya awal yang tetap terjangkau dan pemeliharaan berkala yang terjamin."),
 
-        ("PAKET PRO UNGGULAN\n(Rekomendasi Utama – Kapasitas 400-1.000 Siswa)",
-         "• Setup & Onboarding: Rp 6.500.000 (1x di awal)\n• Maintenance: Rp 2.250.000 / bulan\n(atau Rp 6.750.000 / triwulan)",
-         "• Seluruh Fasilitas Paket Standard\n• Dedicated Cloud Server High-Performance (CBT Massal Serentak)\n• Domain Resmi (cendekia.sekolah.sch.id)\n• Pelatihan Lanjutan & Evaluasi Semesteran\n• Pendampingan Khusus saat Pembagian E-Rapor\n• Backup Harian Terenkripsi",
-         "Pilihan paling diminati sekolah favorit & berprestasi. Menjamin ujian CBT serentak tanpa kendala antrean serta citra digital sekolah yang sangat prestisius."),
+        ("PAKET PRO UNGGULAN (ENTERPRISE)\n(Rekomendasi Utama – Kapasitas 400-1.200 Siswa)",
+         "• Setup & Onboarding: Rp 22.500.000 (1x di awal)\n• Maintenance & Cloud SLA: Rp 4.500.000 / bulan\n(atau Rp 13.500.000 / triwulan)",
+         "• Seluruh Fasilitas Paket Standard\n• Dedicated High-Performance Cloud Server (CBT Massal Serentak)\n• Domain Resmi Institusi (cendekia.namasekolah.sch.id)\n• Pelatihan Intensif 3 Hari & Workshop Evaluasi Semesteran\n• Pendampingan Khusus Tim Teknis saat Pembagian E-Rapor\n• Backup Harian Terenkripsi (Disaster Recovery)",
+         "Pilihan utama bagi sekolah favorit, swasta unggulan, dan pesantren modern. Menjamin stabilitas ujian CBT tanpa kendala antrean serta citra digital sekolah yang sangat prestisius."),
 
         ("PAKET FLEKSIBEL PER-SISWA\n(SaaS Berbasis Iuran Fasilitas Siswa)",
-         "• Setup & Onboarding: Rp 3.500.000 (1x di awal)\n• Retainer: Rp 5.000 / siswa / bulan",
-         "• Seluruh Fitur Lengkap Tanpa Batas\n• Biaya proporsional sesuai jumlah siswa riil\n• Akun siswa & orang tua aktif mandiri\n• Kartu SPP Digital & Integrasi Zoom",
-         "Sangat populer bagi sekolah swasta. Sekolah dapat mengalokasikan dari iuran komputer/pengembangan siswa (misal Rp 10.000/siswa/bulan), sehingga sekolah justru memperoleh SURPLUS kas operasional."),
+         "• Setup & Onboarding: Rp 9.500.000 (1x di awal)\n• Retainer Layanan: Rp 10.000 / siswa / bulan",
+         "• Seluruh Fitur Enterprise Lengkap Tanpa Batas\n• Biaya proporsional sesuai jumlah siswa aktif riil\n• Akun mandiri Siswa & Orang Tua aktif di ponsel\n• Kartu SPP Digital & Integrasi Zoom Rapat 1-Klik",
+         "Sangat menguntungkan bagi sekolah swasta. Sekolah dapat mengalokasikan dari iuran komputer/lab siswa (misal Rp 15.000/siswa/bulan), sehingga sekolah justru memperoleh SURPLUS kas operasional."),
 
         ("PAKET ENTERPRISE LISENSI PENUH\n(Beli Putus Yayasan Multi-Unit)",
-         "• Investasi Lisensi: Rp 45.000.000 s/d Rp 65.000.000 (One-Time)\n• Maintenance Opsional: Rp 1.500.000 / bulan",
-         "• Full Source Code & Hak Lisensi Penuh Yayasan\n• Deployment di Server Lokal / VPS Mandiri Yayasan\n• Bebas Biaya Langganan Bulanan Selamanya\n• Kustomisasi Khusus Kurikulum Yayasan\n• Garansi Pemeliharaan Sistem 12 Bulan Penuh",
-         "Pilihan terbaik bagi yayasan besar yang menaungi beberapa unit sekolah sekaligus (SD, SMP, SMA/SMK) dan menghendaki kedaulatan server mandiri.")
+         "• Investasi Lisensi: Rp 75.000.000 s/d Rp 120.000.000 (One-Time)\n• Maintenance Opsional: Rp 2.500.000 / bulan",
+         "• Full Source Code & Hak Cipta Lisensi Penuh Yayasan\n• Deployment di Server Lokal / Data Center / VPS Mandiri Yayasan\n• Bebas Biaya Langganan Bulanan Selamanya\n• Kustomisasi Khusus Kurikulum Yayasan\n• Garansi Pemeliharaan Sistem 12 Bulan Penuh",
+         "Pilihan terbaik bagi yayasan berskala besar yang menaungi beberapa unit sekolah sekaligus (SD, SMP, SMA/SMK) dan menghendaki kedaulatan data di server internal.")
     ]
 
     for p_name, p_cost, p_feat, p_rec in pricing_options:
