@@ -15,6 +15,54 @@ def set_cell_margins(cell, top=120, bottom=120, left=160, right=160):
     tcMar = parse_xml(f'<w:tcMar {nsdecls("w")}><w:top w:w="{top}" w:type="dxa"/><w:bottom w:w="{bottom}" w:type="dxa"/><w:left w:w="{left}" w:type="dxa"/><w:right w:w="{right}" w:type="dxa"/></w:tcMar>')
     tcPr.append(tcMar)
 
+def add_figure_image(doc, img_path, caption_text, width_inches=6.0):
+    if os.path.exists(img_path):
+        p_img = doc.add_paragraph()
+        p_img.alignment = WD_ALIGN_PARAGRAPH.CENTER
+        p_img.paragraph_format.space_before = Pt(8)
+        p_img.paragraph_format.space_after = Pt(2)
+        r_img = p_img.add_run()
+        r_img.add_picture(img_path, width=Inches(width_inches))
+
+        p_cap = doc.add_paragraph()
+        p_cap.alignment = WD_ALIGN_PARAGRAPH.CENTER
+        p_cap.paragraph_format.space_before = Pt(2)
+        p_cap.paragraph_format.space_after = Pt(12)
+        r_cap = p_cap.add_run(caption_text)
+        r_cap.font.size = Pt(8.5)
+        r_cap.font.italic = True
+        r_cap.font.color.rgb = RGBColor(100, 116, 139)
+
+def add_two_mobile_figures(doc, img1_path, cap1, img2_path, cap2):
+    if os.path.exists(img1_path) and os.path.exists(img2_path):
+        table = doc.add_table(rows=1, cols=2)
+        table.alignment = WD_TABLE_ALIGNMENT.CENTER
+        c1, c2 = table.rows[0].cells
+
+        p1 = c1.paragraphs[0]
+        p1.alignment = WD_ALIGN_PARAGRAPH.CENTER
+        r1 = p1.add_run()
+        r1.add_picture(img1_path, width=Inches(2.5))
+        p1_cap = c1.add_paragraph()
+        p1_cap.alignment = WD_ALIGN_PARAGRAPH.CENTER
+        p1_cap.paragraph_format.space_before = Pt(3)
+        rc1 = p1_cap.add_run(cap1)
+        rc1.font.size = Pt(8)
+        rc1.font.italic = True
+        rc1.font.color.rgb = RGBColor(100, 116, 139)
+
+        p2 = c2.paragraphs[0]
+        p2.alignment = WD_ALIGN_PARAGRAPH.CENTER
+        r2 = p2.add_run()
+        r2.add_picture(img2_path, width=Inches(2.5))
+        p2_cap = c2.add_paragraph()
+        p2_cap.alignment = WD_ALIGN_PARAGRAPH.CENTER
+        p2_cap.paragraph_format.space_before = Pt(3)
+        rc2 = p2_cap.add_run(cap2)
+        rc2.font.size = Pt(8)
+        rc2.font.italic = True
+        rc2.font.color.rgb = RGBColor(100, 116, 139)
+
 def add_heading_with_spacing(doc, text, level, space_before=18, space_after=8, color=None):
     h = doc.add_heading(text, level=level)
     h.paragraph_format.space_before = Pt(space_before)
@@ -162,6 +210,8 @@ def build_comprehensive_proposal():
         "Dengan Cendekia, sekolah beralih dari era manual yang lambat dan boros kertas (paper-based) menuju otomatisasi penuh (paperless school): presensi digital instan, pembuatan buku nilai dan pencetakan E-Rapor otomatis berstandar dinas, ujian online CBT dengan penilaian mandiri, penerbitan tagihan SPP massal sekali klik, penanganan kedisiplinan BK terukur, hingga portal khusus orang tua untuk memantau kehadiran dan perkembangan belajar anak secara real-time dari ponsel pintar."
     )
 
+    add_figure_image(doc, "proposal_images/01_dashboard_admin.png", "Gambar 1.1: Tampilan Pusat Kendali (Command Center) & Dashboard Eksekutif Administrator Cendekia")
+
     # =========================================================================
     # 2. ANALISIS PERMASALAHAN NYATA SEKOLAH (PAIN POINTS)
     # =========================================================================
@@ -248,68 +298,40 @@ def build_comprehensive_proposal():
     # =========================================================================
     add_heading_with_spacing(doc, "4. PENJELASAN MENDALAM SETIAP MODUL & FITUR UNGGULAN", level=1, color=COLOR_PRIMARY)
 
-    modules_deep_dive = [
-        ("4.1. Modul Presensi & Kehadiran Harian Siswa (Digital Attendance)", [
-            ("Pencatatan Massal Cepat: ", "Guru mata pelajaran atau wali kelas dapat mencatat kehadiran seluruh siswa satu kelas hanya dalam waktu 30 detik melalui layar cepat (Hadir, Sakit, Izin, Alpa)."),
-            ("Validasi Keterangan Sakit/Izin: ", "Tersedia kolom catatan khusus untuk mencantumkan nomor surat dokter atau alasan izin."),
-            ("Sinkronisasi Langsung ke HP Orang Tua: ", "Begitu guru menekan tombol 'Simpan Kehadiran', status kehadiran anak hari itu langsung berkedip di ponsel orang tua melalui Portal Wali Murid."),
-            ("Rekapitulasi Persentase Otomatis: ", "Tidak ada lagi hitung manual di akhir bulan; persentase kehadiran langsung masuk ke lembar E-Rapor secara otomatis.")
-        ]),
+    # 4.1 Modul Presensi
+    add_heading_with_spacing(doc, "4.1. Modul Presensi & Kehadiran Harian Siswa (Digital Attendance)", level=2, space_before=12, space_after=6, color=COLOR_SECONDARY)
+    doc.add_paragraph("Pencatatan kehadiran siswa dilakukan secara massal dan efisien. Guru pengajar atau wali kelas dapat menyelesaikan presensi 1 rombel (35–40 siswa) hanya dalam waktu 30 detik melalui tombol Hadir, Izin/Sakit, dan Alpa. Sistem dilengkapi kolom keterangan surat dokter/izin, kalkulasi persentase kehadiran otomatis untuk rapor, serta fitur notifikasi WhatsApp resmi 1-klik yang dapat dikirimkan langsung ke orang tua tanpa biaya kuota API.")
+    add_figure_image(doc, "proposal_images/03_absensi_guru.png", "Gambar 4.1: Antarmuka Presensi Guru dengan Sinkronisasi Real-time dan Tombol Notifikasi WhatsApp")
 
-        ("4.2. Modul Buku Nilai & E-Rapor Digital Siap Cetak (Kurikulum Merdeka)", [
-            ("Fleksibilitas Bobot Nilai: ", "Mendukung pembobotan terpadu: Nilai Tugas Harian, Penilaian Tengah Semester (PTS), dan Penilaian Akhir Semester (PAS)."),
-            ("Konversi Predikat Otomatis: ", "Sistem secara otomatis mengonversi angka 0-100 menjadi predikat A (Sangat Baik), B (Baik), C (Cukup), D (Perlu Pembimbingan) sesuai KKM/Kriteria Ketercapaian Tujuan Pembelajaran (KKTP)."),
-            ("Catatan Sikap Spiritual & Sosial Wali Kelas: ", "Wali kelas memiliki ruang kerja khusus untuk menginput capaian karakter Profil Pelajar Pancasila, catatan motivasi, dan ranking kelas."),
-            ("E-Rapor PDF Standar Dinas Siap Cetak: ", "Menghasilkan lembar rapor digital format A4 resmi dengan kop sekolah, nomor induk, data identitas siswa, tabel nilai rapi, dan kolom tanda tangan kepala sekolah/wali kelas yang siap cetak atau dikirim via WhatsApp/email.")
-        ]),
+    # 4.2 Modul Buku Nilai & E-Rapor Digital
+    add_heading_with_spacing(doc, "4.2. Modul Buku Nilai & E-Rapor Digital Siap Cetak (Kurikulum Merdeka)", level=2, space_before=14, space_after=6, color=COLOR_SECONDARY)
+    doc.add_paragraph("Mengintegrasikan seluruh komponen penilaian akademik: Tugas Harian, Penilaian Tengah Semester (PTS), dan Penilaian Akhir Semester (PAS). Sistem secara otomatis mengonversi skor angka menjadi predikat (A/B/C/D) sesuai Kriteria Ketercapaian Tujuan Pembelajaran (KKTP). Wali kelas memiliki ruang khusus untuk menambahkan catatan capaian karakter Profil Pelajar Pancasila dan langsung mengunduh/mencetak dokumen E-Rapor format resmi A4 lengkap dengan kop sekolah dan kolom tanda tangan.")
+    add_figure_image(doc, "proposal_images/04_buku_nilai.png", "Gambar 4.2: Buku Nilai Akademik Terpadu dengan Perhitungan Bobot & Predikat Otomatis")
+    add_figure_image(doc, "proposal_images/06_e_rapor.png", "Gambar 4.3: Dokumen Resmi E-Rapor Digital Siap Cetak Format A4 Standar Kurikulum Merdeka")
 
-        ("4.3. Modul E-Learning, Tugas Mandiri, & Ujian Online (CBT Engine)", [
-            ("Pusat Sumber Belajar Digital: ", "Guru dapat membagikan materi bacaan, file presentasi PDF, ringkasan rumus, maupun tautan video pembelajaran yang dapat diakses siswa kapan saja."),
-            ("Pengumpulan Tugas Berbatas Waktu (Deadlines): ", "Siswa mengunggah hasil tugas langsung melalui dashboard; guru menerima berkas secara rapi tanpa risiko hilang dan memberikan nilai serta umpan balik langsung di sistem."),
-            ("Engine Ujian CBT Pilihan Ganda Anti-Curang: ", "Dilengkapi timer pengerjaan real-time, pengacakan urutan soal dan opsi jawaban, auto-save jawaban setiap detik saat koneksi internet terputus."),
-            ("Koreksi & Nilai Instan: ", "Begitu siswa menekan tombol 'Kumpulkan Ujian', nilai ujian langsung dihitung otomatis oleh sistem, lengkap dengan rekapitulasi analisis butir soal.")
-        ]),
+    # 4.3 Modul E-Learning, Tugas Mandiri, & CBT Online Engine
+    add_heading_with_spacing(doc, "4.3. Modul E-Learning, Tugas Mandiri, & Ujian Online (CBT Engine)", level=2, space_before=14, space_after=6, color=COLOR_SECONDARY)
+    doc.add_paragraph("Fasilitas pembelajaran digital terpadu di mana dewan guru dapat membagikan materi bacaan, file presentasi PDF, serta memberikan tugas mandiri dengan counter batas waktu pengumpulan (deadlines). Selain itu, tersedia mesin ujian online Computer Based Test (CBT) mandiri dengan timer berwaktu, pengacakan nomor soal & opsi pilihan ganda, auto-save jawaban saat koneksi terputus, dan koreksi otomatis sehingga skor ujian siswa keluar seketika.")
+    add_figure_image(doc, "proposal_images/05_cbt_exam.png", "Gambar 4.4: Antarmuka Ruang Ujian CBT Siswa Berwaktu Lengkap dengan Sistem Penilaian Instan")
 
-        ("4.4. Modul Smart Finance: Manajemen Tagihan & Penerbitan SPP Massal", [
-            ("Generator Tagihan Massal Sekali Klik: ", "Tata Usaha tidak perlu lagi mengetik kwitansi 500-1000 siswa satu per satu. Cukup pilih bulan dan tahun, lalu klik tombol 'Generate Tagihan Massal', maka tagihan seluruh siswa langsung terbit dalam hitungan detik."),
-            ("Kartu SPP Digital Siswa: ", "Setiap siswa dan orang tua memiliki riwayat pembayaran transparan: bulan mana saja yang sudah lunas dan bulan mana saja yang masih tertunggak."),
-            ("Pencatatan Pembayaran & Kwitansi Resmi: ", "Staf kasir TU dapat menandai pembayaran (Lunas) dengan memilih metode (Tunai, Transfer Bank, QRIS), dan sistem otomatis menerbitkan kwitansi resmi digital ber-ID unik."),
-            ("Monitoring Piutang Sekolah Real-time: ", "Kepala Sekolah dapat memantau total dana SPP yang sudah masuk vs sisa tunggakan yang belum terbayar dalam bentuk dashboard grafik keuangan.")
-        ]),
+    # 4.4 Modul Smart Finance: Manajemen SPP & Tagihan Massal
+    add_heading_with_spacing(doc, "4.4. Modul Smart Finance: Manajemen Tagihan & Penerbitan SPP Massal", level=2, space_before=14, space_after=6, color=COLOR_SECONDARY)
+    doc.add_paragraph("Membebaskan staf Tata Usaha dari pembuatan kwitansi dan penulisan buku kas manual yang melelahkan. Staf TU dapat menerbitkan tagihan SPP bulanan ke seluruh siswa (500–1.000 siswa) hanya dengan 1 klik tombol 'Generate Tagihan Massal' di awal bulan. Setiap transaksi pembayaran dapat diverifikasi (Tunai, Transfer Bank, QRIS), otomatis menerbitkan kwitansi resmi digital ber-ID transaksi unik, dan menyajikan dashboard audit piutang sekolah secara transparan.")
+    add_figure_image(doc, "proposal_images/02_finance_spp.png", "Gambar 4.5: Modul Keuangan & Generator Penerbitan Tagihan SPP Massal Sekali Klik")
 
-        ("4.5. Modul Bimbingan Konseling (BK) & Kedisiplinan Siswa", [
-            ("Katalog Pelanggaran Berstandar: ", "Sekolah dapat mengonfigurasi jenis pelanggaran sesuai tata tertib resmi (kategori Ringan, Sedang, Berat) beserta bobot poin sanksi."),
-            ("Pencatatan Kasus & Riwayat Pembinaan: ", "Guru BK dapat mencatat waktu kejadian, saksi, deskripsi kronologi, dan tindakan konseling yang telah diberikan."),
-            ("Akumulasi Poin Sanksi Otomatis: ", "Sistem menghitung total poin pelanggaran siswa. Jika melewati batas tertentu, sistem memberi peringatan untuk memanggil orang tua."),
-            ("Transparansi ke Orang Tua: ", "Wali murid dapat melihat poin kedisiplinan anaknya secara jujur di aplikasi, sehingga mencegah miskomunikasi saat pembinaan dilakukan.")
-        ]),
+    # 4.5 Modul Bimbingan Konseling (BK) & Kedisiplinan Siswa
+    add_heading_with_spacing(doc, "4.5. Modul Bimbingan Konseling (BK) & Kedisiplinan Siswa", level=2, space_before=14, space_after=6, color=COLOR_SECONDARY)
+    doc.add_paragraph("Pusat pencatatan pelanggaran tata tertib dan riwayat pembinaan kesiswaan. Mengkategorikan jenis pelanggaran (Ringan, Sedang, Berat) dengan sistem akumulasi poin sanksi yang objektif dan transparan. Wali murid dapat melihat riwayat kedisiplinan anaknya secara terbuka di aplikasi, sehingga mencegah komplain atau penolakan saat pihak sekolah memberikan pembinaan bertahap.")
 
-        ("4.6. Modul Inovasi: Smart Hybrid Online Meeting (Zoom & Google Meet)", [
-            ("Jadwal Pertemuan Virtual Terpadu: ", "Wali kelas atau panitia sekolah dapat membuat jadwal pertemuan daring: 'Sosialisasi Ujian', 'Rapat Komite Sekolah', atau 'Konsultasi Hasil Belajar Rapor'."),
-            ("Integrasi Tautan Cerdas (Smart Link): ", "Menyematkan link Zoom atau Google Meet resmi lengkap dengan Meeting ID dan Passcode."),
-            ("Beban Bandwidth Server Sekolah 0% (Nol Persen): ", "Menggunakan arsitektur hybrid cerdas: Cendekia bertindak sebagai penjadwal dan autentikasi, sementara transmisi video streaming dialihkan ke server global Zoom/Google Meet. Server sekolah tidak akan pernah down meskipun dihadiri oleh 500 orang tua sekaligus!"),
-            ("Akses 1-Klik dari HP Orang Tua: ", "Orang tua cukup menekan tombol 'Buka Zoom Rapat' di portalnya, langsung terhubung ke ruang rapat tanpa perlu mencari tautan di grup WhatsApp yang sering tertimbun chat.")
-        ]),
+    # 4.6 Modul Inovasi: Portal Wali Murid Real-time & Smart Hybrid Meeting (Zoom/Meet)
+    add_heading_with_spacing(doc, "4.6. Modul Inovasi: Portal Wali Murid Real-time & Smart Hybrid Meeting", level=2, space_before=14, space_after=6, color=COLOR_SECONDARY)
+    doc.add_paragraph("Menghubungkan orang tua dengan aktivitas sekolah 24/7. Menampilkan lencana kehadiran anak hari ini, kotak peringatan darurat merah jika anak tercatat Alpa, informasi tagihan SPP, serta agenda rapat daring (Zoom / Google Meet). Menggunakan arsitektur cerdas yang mengalihkan video streaming ke infrastruktur global Zoom/Meet sehingga beban bandwidth server sekolah tetap 0% (bebas biaya server mahal).")
+    add_figure_image(doc, "proposal_images/07_portal_orangtua.png", "Gambar 4.6: Portal Wali Murid Real-time: Presensi Anak, Peringatan Alpa, Poin BK, dan Link Rapat Zoom")
 
-        ("4.7. Modul Aplikasi Mobile Multi-Platform (Android, iOS & PWA)", [
-            ("Dua Jalur Akses: ", "Tersedia sebagai Aplikasi Mobile Native (React Native/Expo) dan Progressive Web App (PWA) instan."),
-            ("PWA Tanpa Antre App Store: ", "Orang tua dan siswa cukup membuka tautan sekolah di browser HP (Chrome atau Safari), lalu tekan 'Tambahkan ke Layar Utama'. Aplikasi langsung terpasang di HP dengan ikon resmi Cendekia."),
-            ("Tampilan Responsif Khusus Ponsel: ", "Dirancang seringan mungkin, hemat kuota internet, dan mudah dipahami bahkan oleh orang tua siswa yang kurang mahir teknologi.")
-        ])
-    ]
-
-    for mod_title, mod_items in modules_deep_dive:
-        add_heading_with_spacing(doc, mod_title, level=2, space_before=12, space_after=6, color=COLOR_SECONDARY)
-        for sub_t, sub_d in mod_items:
-            p = doc.add_paragraph(style='List Bullet')
-            p.paragraph_format.space_before = Pt(2)
-            p.paragraph_format.space_after = Pt(2)
-            r1 = p.add_run(sub_t)
-            r1.font.bold = True
-            r1.font.size = Pt(9.5)
-            r1.font.color.rgb = COLOR_PRIMARY
-            r2 = p.add_run(sub_d)
-            r2.font.size = Pt(9.5)
+    # 4.7 Modul Aplikasi Mobile Multi-Platform (Android, iOS & PWA)
+    add_heading_with_spacing(doc, "4.7. Modul Aplikasi Mobile Multi-Platform (PWA, Android & iOS)", level=2, space_before=14, space_after=6, color=COLOR_SECONDARY)
+    doc.add_paragraph("Memberikan kemudahan akses bagi siswa dan wali murid langsung dari genggaman ponsel pintar. Tersedia dalam teknologi Progressive Web App (PWA) instan yang dapat langsung dipasang ke layar utama HP tanpa antrean unduhan di Play Store, serta project native Android Studio mandiri. Tampilan responsif dirancang seringan mungkin, cepat, dan hemat kuota internet.")
+    add_two_mobile_figures(doc, "proposal_images/08_mobile_parent.png", "Gambar 4.7: Tampilan Mobile Portal Orang Tua", "proposal_images/09_mobile_student.png", "Gambar 4.8: Tampilan Mobile Portal Siswa")
 
     doc.add_page_break()
 
