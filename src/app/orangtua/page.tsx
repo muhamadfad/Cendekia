@@ -79,23 +79,50 @@ export default async function OrangTuaDashboardPage() {
         </div>
       </div>
 
+      {/* Urgent Absence Alert */}
+      {todayAttendance?.status === 'ABSENT' && (
+        <div className="bg-rose-50 border border-rose-200 rounded-lg p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 text-rose-950 shadow-xs">
+          <div className="flex items-center gap-3">
+            <AlertTriangle className="w-5 h-5 text-rose-600 shrink-0" />
+            <div>
+              <p className="text-[13px] font-bold text-rose-900">Perhatian: Siswa Belum Hadir di Kelas Hari Ini (Alpa)</p>
+              <p className="text-[12px] text-rose-700 mt-0.5">
+                Putra/putri Anda ({student.user.name}) belum tercatat hadir pada jam pelajaran hari ini tanpa surat keterangan. Silakan hubungi wali kelas.
+              </p>
+            </div>
+          </div>
+          <a
+            href={`https://wa.me/${(student.class?.homeroomTeacher?.user.phone || '081234567890').replace(/^0/, '62').replace(/\D/g, '')}?text=${encodeURIComponent(`Yth. Bapak/Ibu Wali Kelas ${student.class?.name || ''}, saya wali dari ${student.user.name} ingin mengonfirmasi presensi putra/putri kami hari ini.`)}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="px-3.5 py-1.5 bg-rose-600 hover:bg-rose-700 text-white rounded-md text-[12px] font-semibold shrink-0 shadow-sm transition-colors"
+          >
+            Hubungi Wali Kelas via WA
+          </a>
+        </div>
+      )}
+
       {/* 4 Summary Stat Cards */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         {/* Kehadiran Hari Ini */}
         <div className="bg-white border border-slate-200 rounded-lg p-4 shadow-sm space-y-1">
           <span className="text-[11px] font-semibold text-slate-500 uppercase tracking-wide">Presensi Hari Ini</span>
           <div className="flex items-center gap-2 mt-1">
-            {todayAttendance?.status === 'PRESENT' || !todayAttendance ? (
+            {todayAttendance?.status === 'PRESENT' ? (
               <span className="inline-flex items-center gap-1.5 text-[14px] font-semibold text-emerald-700">
                 <CheckCircle2 className="w-4 h-4 text-emerald-600" /> Hadir di Sekolah
               </span>
-            ) : todayAttendance.status === 'EXCUSED' ? (
+            ) : todayAttendance?.status === 'EXCUSED' ? (
               <span className="inline-flex items-center gap-1.5 text-[14px] font-semibold text-blue-700">
                 <Clock className="w-4 h-4 text-blue-600" /> Izin / Sakit
               </span>
-            ) : (
+            ) : todayAttendance?.status === 'ABSENT' ? (
               <span className="inline-flex items-center gap-1.5 text-[14px] font-semibold text-rose-700">
-                <AlertTriangle className="w-4 h-4 text-rose-600" /> Belum Masuk Kelas
+                <AlertTriangle className="w-4 h-4 text-rose-600" /> Belum Masuk Kelas (Alpa)
+              </span>
+            ) : (
+              <span className="inline-flex items-center gap-1.5 text-[13px] font-medium text-slate-600">
+                <Clock className="w-4 h-4 text-slate-400" /> Menunggu Absensi Guru
               </span>
             )}
           </div>

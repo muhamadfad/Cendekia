@@ -1,5 +1,5 @@
 import { prisma } from "@/lib/prisma";
-import { Users, CheckCircle, XCircle, Search, Save, Clock, Calendar } from "lucide-react";
+import { Users, CheckCircle, XCircle, Search, Save, Clock, Calendar, MessageSquare, Smartphone, ShieldCheck } from "lucide-react";
 import dayjs from "dayjs";
 import 'dayjs/locale/id';
 import { saveBulkAttendance } from "./actions";
@@ -19,7 +19,7 @@ export default async function GuruAbsensiPage({ searchParams }: { searchParams: 
           subject: true,
           class: {
             include: {
-              students: { include: { user: true }, orderBy: { user: { name: 'asc' } } }
+              students: { include: { user: true, parent: { include: { user: true } } }, orderBy: { user: { name: 'asc' } } }
             }
           }
         }
@@ -70,6 +70,19 @@ export default async function GuruAbsensiPage({ searchParams }: { searchParams: 
         </div>
       </div>
 
+      {/* Zero Cost Notification Banner */}
+      <div className="bg-emerald-50/70 border border-emerald-200/90 rounded-lg p-3 text-[12px] text-emerald-950 flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6 shadow-xs">
+        <div className="flex items-center gap-2.5">
+          <ShieldCheck className="w-4 h-4 text-emerald-600 shrink-0" />
+          <span>
+            <strong>Smart Realtime Notification (Bebas Biaya API / 0% Beban Server):</strong> Status kehadiran otomatis tersinkronisasi detik ini juga ke portal HP orang tua. Anda juga dapat mengirim pemberitahuan resmi via WhatsApp 1-klik tanpa biaya kuota per pesan.
+          </span>
+        </div>
+        <span className="inline-flex items-center gap-1.5 text-[11px] font-semibold text-emerald-800 bg-white border border-emerald-300 px-2.5 py-1 rounded-md shrink-0 shadow-xs">
+          <Smartphone className="w-3 h-3 text-emerald-600" /> Sinkronisasi HP Aktif
+        </span>
+      </div>
+
       {/* Main Container */}
       <form action={saveBulkAttendance} className="bg-white border border-slate-200 rounded-lg shadow-sm">
         {/* Filter bar */}
@@ -104,16 +117,22 @@ export default async function GuruAbsensiPage({ searchParams }: { searchParams: 
             <thead>
               <tr className="border-b border-slate-200 bg-slate-50/50">
                 <th className="px-4 py-2.5 text-[12px] font-medium text-slate-500 w-[5%]">No</th>
-                <th className="px-4 py-2.5 text-[12px] font-medium text-slate-500 w-[30%]">Nama Siswa</th>
-                <th className="px-4 py-2.5 text-[12px] font-medium text-slate-500 w-[15%]">NISN</th>
-                <th className="px-4 py-2.5 text-[12px] font-medium text-slate-500 text-center w-[25%]">Status Presensi</th>
-                <th className="px-4 py-2.5 text-[12px] font-medium text-slate-500 w-[25%]">Catatan Guru</th>
+                <th className="px-4 py-2.5 text-[12px] font-medium text-slate-500 w-[26%]">Nama Siswa</th>
+                <th className="px-4 py-2.5 text-[12px] font-medium text-slate-500 w-[14%]">NISN</th>
+                <th className="px-4 py-2.5 text-[12px] font-medium text-slate-500 text-center w-[23%]">Status Presensi</th>
+                <th className="px-4 py-2.5 text-[12px] font-medium text-slate-500 w-[18%]">Catatan Guru</th>
+                <th className="px-4 py-2.5 text-[12px] font-medium text-slate-500 text-center w-[14%]">Notif WA Ortu</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
               {students.map((student, idx) => {
                 const recorded = attendances.find(a => a.studentId === student.id);
                 const currentStatus = recorded ? recorded.status : 'PRESENT';
+                const parentPhone = student.parentPhone || student.parent?.phone || '081234567890';
+                const cleanPhone = parentPhone.replace(/^0/, '62').replace(/\D/g, '');
+                const waMessage = encodeURIComponent(
+                  `Yth. Bapak/Ibu Wali Murid dari ${student.user.name},\n\nKami menginformasikan status presensi harian siswa (${dayjs().format('dddd, DD MMMM YYYY')}):\n• Mata Pelajaran: ${activeSchedule.subject.name}\n• Rombel: ${activeSchedule.class.name}\n• Status Kehadiran: ${currentStatus === 'PRESENT' ? 'HADIR' : currentStatus === 'EXCUSED' ? 'IZIN / SAKIT' : 'BELUM MASUK KELAS (ALPA)'}\n${recorded?.notes ? `• Keterangan: ${recorded.notes}\n` : ''}\nSalam hormat,\n${teacher.user.name} (Guru Pengajar Cendekia)`
+                );
 
                 return (
                   <tr key={student.id} className="hover:bg-slate-50/80 transition-colors">
@@ -151,13 +170,31 @@ export default async function GuruAbsensiPage({ searchParams }: { searchParams: 
                         className="w-full px-2.5 py-1 text-[12px] border border-slate-200 rounded outline-none focus:border-slate-400 bg-white"
                       />
                     </td>
+                    <td className="px-4 py-2.5 text-center">
+                      <a
+                        href={`https://wa.me/${cleanPhone}?text=${waMessage}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className={`inline-flex items-center gap-1 px-2.5 py-1 rounded text-[11px] font-semibold transition-colors ${
+                          currentStatus === 'ABSENT'
+                            ? 'bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-300'
+                            : currentStatus === 'EXCUSED'
+                            ? 'bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-200'
+                            : 'bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200'
+                        }`}
+                        title="Kirim notifikasi langsung ke WhatsApp orang tua (Gratis & Tanpa Beban Server)"
+                      >
+                        <MessageSquare className="w-3 h-3" />
+                        <span>Kirim WA</span>
+                      </a>
+                    </td>
                   </tr>
                 );
               })}
 
               {students.length === 0 && (
                 <tr>
-                  <td colSpan={5} className="px-4 py-8 text-center text-[13px] text-slate-500">
+                  <td colSpan={6} className="px-4 py-8 text-center text-[13px] text-slate-500">
                     Belum ada siswa terdaftar di rombel ini.
                   </td>
                 </tr>

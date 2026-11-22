@@ -12,28 +12,10 @@ export async function loginApi(email: string, password: string) {
     return await res.json();
   } catch (error) {
     console.error("Login API error:", error);
-    // Fallback demo data if offline or network error
-    if (email.includes("siswa")) {
-      return {
-        success: true,
-        data: {
-          id: "demo-siswa",
-          name: "Ahmad Fauzi",
-          email: "siswa@cendekia.sch.id",
-          role: "STUDENT",
-        },
-      };
-    } else {
-      return {
-        success: true,
-        data: {
-          id: "demo-ortu",
-          name: "H. Joko Widodo, S.E.",
-          email: "orangtua@cendekia.sch.id",
-          role: "PARENT",
-        },
-      };
-    }
+    return {
+      success: false,
+      message: "Gagal terhubung ke server sekolah. Pastikan ponsel Anda terhubung ke jaringan yang sama.",
+    };
   }
 }
 
@@ -45,31 +27,10 @@ export async function getStudentDashboard(studentId?: string) {
     const res = await fetch(url);
     return await res.json();
   } catch (error) {
+    console.error("Student dashboard API error:", error);
     return {
-      success: true,
-      data: {
-        student: {
-          name: "Ahmad Fauzi",
-          nisn: "0081234567",
-          class: "X IPA 1",
-          homeroomTeacher: "Drs. Budi Santoso",
-        },
-        todaySchedules: [
-          { id: "1", subject: { name: "Fisika" }, startTime: "07:30", endTime: "09:00" },
-          { id: "2", subject: { name: "Matematika" }, startTime: "09:15", endTime: "10:45" },
-        ],
-        assignments: [
-          { id: "a1", title: "Praktikum Vektor", subject: "Fisika", dueDate: "2026-12-25", isSubmitted: true, score: 92 },
-        ],
-        exams: [
-          { id: "e1", title: "Ulangan Harian 1 Newton", subject: "Fisika", duration: 45, isCompleted: true, score: 100 },
-        ],
-        finance: {
-          totalPending: 0,
-          pendingCount: 0,
-          virtualAccount: "8872-0081-2345",
-        },
-      },
+      success: false,
+      message: "Gagal memuat data akademik siswa dari server.",
     };
   }
 }
@@ -82,39 +43,10 @@ export async function getParentDashboard(parentId?: string) {
     const res = await fetch(url);
     return await res.json();
   } catch (error) {
+    console.error("Parent dashboard API error:", error);
     return {
-      success: true,
-      data: {
-        parentName: "H. Joko Widodo, S.E.",
-        student: {
-          name: "Ahmad Fauzi",
-          nisn: "0081234567",
-          class: "X IPA 1",
-          homeroomTeacher: "Drs. Budi Santoso",
-          homeroomPhone: "0812-9876-5432",
-        },
-        todayAttendance: {
-          status: "PRESENT",
-          date: "Rabu, 18 November 2026",
-        },
-        violations: {
-          totalPoints: 0,
-          records: [],
-        },
-        finance: {
-          totalPending: 350000,
-          pendingMonths: ["Juli 2026"],
-          virtualAccount: "8872-0081-2345",
-        },
-        upcomingMeeting: {
-          title: "Rapat Pleno Komite & Evaluasi Rapor",
-          date: "Sabtu, 20 Desember 2026",
-          time: "09:00 - 11:30 WIB",
-          zoomUrl: "https://zoom.us/join",
-          meetingId: "842 1928 3341",
-          passcode: "cendekia26",
-        },
-      },
+      success: false,
+      message: "Gagal memuat data monitoring wali murid dari server.",
     };
   }
 }
