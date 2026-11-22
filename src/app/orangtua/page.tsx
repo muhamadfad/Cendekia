@@ -3,6 +3,7 @@ import { Users, GraduationCap, CheckCircle2, Clock, AlertTriangle, ShieldAlert, 
 import Link from "next/link";
 import dayjs from "dayjs";
 import 'dayjs/locale/id';
+import ParentNotificationListener from "@/components/ParentNotificationListener";
 
 dayjs.locale('id');
 export const dynamic = 'force-dynamic';
@@ -64,6 +65,9 @@ export default async function OrangTuaDashboardPage() {
 
   return (
     <div className="p-8 max-w-[1400px] mx-auto space-y-6">
+      {/* Realtime Attendance Push & Popup Listener */}
+      <ParentNotificationListener studentId={student.id} />
+
       {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
