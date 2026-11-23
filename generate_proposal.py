@@ -63,6 +63,60 @@ def add_two_mobile_figures(doc, img1_path, cap1, img2_path, cap2):
         rc2.font.italic = True
         rc2.font.color.rgb = RGBColor(100, 116, 139)
 
+def add_problem_box(doc, text):
+    table = doc.add_table(rows=1, cols=1)
+    table.alignment = WD_TABLE_ALIGNMENT.CENTER
+    cell = table.rows[0].cells[0]
+    set_cell_background(cell, "FFF1F2") # Light Rose
+    set_cell_margins(cell, top=100, bottom=100, left=140, right=140)
+    p = cell.paragraphs[0]
+    p.paragraph_format.space_before = Pt(3)
+    p.paragraph_format.space_after = Pt(3)
+    r_hdr = p.add_run("🔴 MASALAH DI SEKOLAH SAAT INI (PAIN POINT):\n")
+    r_hdr.font.bold = True
+    r_hdr.font.size = Pt(9.5)
+    r_hdr.font.color.rgb = RGBColor(190, 18, 60) # Rose 700
+    r_body = p.add_run(text)
+    r_body.font.size = Pt(9.5)
+    r_body.font.color.rgb = RGBColor(51, 65, 85)
+    doc.add_paragraph().paragraph_format.space_after = Pt(2)
+
+def add_solution_box(doc, text):
+    table = doc.add_table(rows=1, cols=1)
+    table.alignment = WD_TABLE_ALIGNMENT.CENTER
+    cell = table.rows[0].cells[0]
+    set_cell_background(cell, "F0F9FF") # Light Sky Blue
+    set_cell_margins(cell, top=100, bottom=100, left=140, right=140)
+    p = cell.paragraphs[0]
+    p.paragraph_format.space_before = Pt(3)
+    p.paragraph_format.space_after = Pt(3)
+    r_hdr = p.add_run("🔵 SOLUSI & CARA KERJA FITUR CENDEKIA:\n")
+    r_hdr.font.bold = True
+    r_hdr.font.size = Pt(9.5)
+    r_hdr.font.color.rgb = RGBColor(3, 105, 161) # Sky 700
+    r_body = p.add_run(text)
+    r_body.font.size = Pt(9.5)
+    r_body.font.color.rgb = RGBColor(51, 65, 85)
+    doc.add_paragraph().paragraph_format.space_after = Pt(2)
+
+def add_impact_box(doc, text):
+    table = doc.add_table(rows=1, cols=1)
+    table.alignment = WD_TABLE_ALIGNMENT.CENTER
+    cell = table.rows[0].cells[0]
+    set_cell_background(cell, "F0FDF4") # Light Emerald Green
+    set_cell_margins(cell, top=100, bottom=100, left=140, right=140)
+    p = cell.paragraphs[0]
+    p.paragraph_format.space_before = Pt(3)
+    p.paragraph_format.space_after = Pt(3)
+    r_hdr = p.add_run("🟢 KENAPA FITUR INI WAJIB DIMILIKI & APA DAMPAK KEUNTUNGANNYA?\n")
+    r_hdr.font.bold = True
+    r_hdr.font.size = Pt(9.5)
+    r_hdr.font.color.rgb = RGBColor(21, 128, 61) # Emerald 700
+    r_body = p.add_run(text)
+    r_body.font.size = Pt(9.5)
+    r_body.font.color.rgb = RGBColor(51, 65, 85)
+    doc.add_paragraph().paragraph_format.space_after = Pt(8)
+
 def add_heading_with_spacing(doc, text, level, space_before=18, space_after=8, color=None):
     h = doc.add_heading(text, level=level)
     h.paragraph_format.space_before = Pt(space_before)
@@ -297,41 +351,135 @@ def build_comprehensive_proposal():
     # 4. PENJELASAN MENDALAM SETIAP MODUL & FITUR UNGGULAN
     # =========================================================================
     add_heading_with_spacing(doc, "4. PENJELASAN MENDALAM SETIAP MODUL & FITUR UNGGULAN", level=1, color=COLOR_PRIMARY)
+    doc.add_paragraph(
+        "Setiap fitur dan modul dalam CENDEKIA dikembangkan bukan sekadar sebagai perangkat lunak administratif biasa, melainkan dirancang secara spesifik untuk membedah dan menyelesaikan akar permasalahan operasional sekolah. Berikut adalah analisis komprehensif akar masalah, solusi teknologi, bukti nyata antarmuka sistem, serta alasan esensial mengapa fitur ini wajib dimiliki institusi pendidikan modern:"
+    )
 
     # 4.1 Modul Presensi
-    add_heading_with_spacing(doc, "4.1. Modul Presensi & Kehadiran Harian Siswa (Digital Attendance)", level=2, space_before=12, space_after=6, color=COLOR_SECONDARY)
-    doc.add_paragraph("Pencatatan kehadiran siswa dilakukan secara massal dan efisien. Guru pengajar atau wali kelas dapat menyelesaikan presensi 1 rombel (35–40 siswa) hanya dalam waktu 30 detik melalui tombol Hadir, Izin/Sakit, dan Alpa. Sistem dilengkapi kolom keterangan surat dokter/izin, kalkulasi persentase kehadiran otomatis untuk rapor, serta fitur notifikasi WhatsApp resmi 1-klik yang dapat dikirimkan langsung ke orang tua tanpa biaya kuota API.")
-    add_figure_image(doc, "proposal_images/03_absensi_guru.png", "Gambar 4.1: Antarmuka Presensi Guru dengan Sinkronisasi Real-time dan Tombol Notifikasi WhatsApp")
+    add_heading_with_spacing(doc, "4.1. Modul Presensi & Kehadiran Harian Siswa (Digital Attendance)", level=2, space_before=14, space_after=6, color=COLOR_SECONDARY)
+    add_problem_box(
+        doc,
+        "Di banyak sekolah, absensi masih menggunakan kertas lembaran atau buku presensi manual yang memakan waktu 15–20 menit di awal jam pelajaran. Selain menyita waktu mengajar guru, absensi manual sangat rawan manipulasi (titip absen/tanda tangan palsu) dan dokumennya mudah robek atau hilang. Rekapitulasi bulanan menghabiskan berhari-hari kerja staf TU. Yang paling berbahaya: bila anak membolos di tengah jalan dan tidak sampai di sekolah, orang tua sama sekali tidak mengetahuinya sampai berminggu-minggu kemudian saat kasus sudah terlanjur fatal."
+    )
+    add_solution_box(
+        doc,
+        "CENDEKIA menyediakan modul presensi digital instan. Guru cukup membuka menu Presensi di gawai/laptop, sistem otomatis menetapkan status default 'Hadir Semua' sehingga guru hanya perlu menandai siswa yang Sakit, Izin, atau Alpa. Presensi 1 kelas (35–40 siswa) tuntas dalam tempo kurang dari 30 detik! Dilengkapi kolom pencatatan nomor surat dokter/keterangan izin, kalkulasi persentase kehadiran otomatis yang langsung mengalir ke E-Rapor, serta tombol 'Kirim WA ke Orang Tua' sekali klik untuk konfirmasi kehadiran langsung ke nomor WhatsApp wali murid tanpa biaya langganan API tambahan."
+    )
+    add_figure_image(doc, "proposal_images/03_absensi_guru.png", "Gambar 4.1: Antarmuka Presensi Guru dengan Tombol Status Cepat, Rekapitulasi Otomatis, dan Notifikasi WhatsApp Ortu")
+    add_impact_box(
+        doc,
+        "1. Ketenangan & Kepercayaan Penuh Orang Tua (Peace of Mind): Sekolah mampu mendeteksi ketidakhadiran siswa di jam pertama dan memberi kepastian keselamatan anak kepada keluarga.\n"
+        "2. Efisiensi Jam Mengajar: Menghemat 15 menit per kelas per hari (akumulasi ratusan jam kerja guru per semester) yang dialihkan sepenuhnya untuk kualitas pembelajaran.\n"
+        "3. Validitas & Kesiapan Audit Akreditasi: Rekapitulasi persentase kehadiran siswa tersaji secara presisi, real-time, dan terverifikasi tanpa rekayasa data untuk kebutuhan akreditasi BAN-S/M."
+    )
 
     # 4.2 Modul Buku Nilai & E-Rapor Digital
-    add_heading_with_spacing(doc, "4.2. Modul Buku Nilai & E-Rapor Digital Siap Cetak (Kurikulum Merdeka)", level=2, space_before=14, space_after=6, color=COLOR_SECONDARY)
-    doc.add_paragraph("Mengintegrasikan seluruh komponen penilaian akademik: Tugas Harian, Penilaian Tengah Semester (PTS), dan Penilaian Akhir Semester (PAS). Sistem secara otomatis mengonversi skor angka menjadi predikat (A/B/C/D) sesuai Kriteria Ketercapaian Tujuan Pembelajaran (KKTP). Wali kelas memiliki ruang khusus untuk menambahkan catatan capaian karakter Profil Pelajar Pancasila dan langsung mengunduh/mencetak dokumen E-Rapor format resmi A4 lengkap dengan kop sekolah dan kolom tanda tangan.")
-    add_figure_image(doc, "proposal_images/04_buku_nilai.png", "Gambar 4.2: Buku Nilai Akademik Terpadu dengan Perhitungan Bobot & Predikat Otomatis")
-    add_figure_image(doc, "proposal_images/06_e_rapor.png", "Gambar 4.3: Dokumen Resmi E-Rapor Digital Siap Cetak Format A4 Standar Kurikulum Merdeka")
+    add_heading_with_spacing(doc, "4.2. Modul Buku Nilai & E-Rapor Digital Siap Cetak (Kurikulum Merdeka)", level=2, space_before=16, space_after=6, color=COLOR_SECONDARY)
+    add_problem_box(
+        doc,
+        "Setiap akhir semester, guru dan wali kelas dihadapkan pada mimpi buruk administratif: mengumpulkan nilai harian, tugas, PTS, dan PAS dari berbagai lembar kertas atau spreadsheet Excel yang terpisah-pisah. Rumus kalkulasi sering rusak (error formula), penentuan predikat huruf tidak seragam, dan input capaian kompetensi secara manual memicu stres tinggi hingga begadang berminggu-minggu. Akibatnya, pembagian rapor murid sering terlambat dan citra profesionalisme sekolah di mata orang tua menurun."
+    )
+    add_solution_box(
+        doc,
+        "CENDEKIA menghadirkan Buku Nilai Akademik Terpadu yang sepenuhnya selaras dengan panduan Kurikulum Merdeka dan Kurikulum 2013. Guru mata pelajaran cukup menginput nilai tugas dan asesmen (formatif/sumatif). Sistem secara otomatis menghitung bobot nilai akhir, mengonversi skor angka menjadi predikat (A/B/C/D) sesuai Kriteria Ketercapaian Tujuan Pembelajaran (KKTP), dan menyusun catatan capaian Profil Pelajar Pancasila. Dalam satu sentuhan tombol, dokumen E-Rapor resmi format standar A4 langsung siap dicetak lengkap dengan kop surat sekolah, rekap absensi, catatan wali kelas, dan kolom tanda tangan kepala sekolah."
+    )
+    add_figure_image(doc, "proposal_images/04_buku_nilai.png", "Gambar 4.2: Buku Nilai Akademik Terpadu dengan Kalkulasi Bobot Formatif/Sumatif dan Konversi Predikat Otomatis")
+    add_figure_image(doc, "proposal_images/06_e_rapor.png", "Gambar 4.3: Dokumen Resmi E-Rapor Digital Siap Cetak Format A4 Standar Kurikulum Merdeka Lengkap Kolom Tanda Tangan")
+    add_impact_box(
+        doc,
+        "1. Menghilangkan Lembur & Kelelahan Guru: Proses penyusunan rapor yang biasanya memakan waktu 2–3 minggu dipangkas menjadi hanya 1–2 hari.\n"
+        "2. Akurasi 100% (Zero Human-Error): Menghilangkan risiko kekeliruan hitung rumus matematika atau kesalahan ketik predikat yang sering memicu sengketa nilai dengan wali murid.\n"
+        "3. Standardisasi Dokumen Sesuai Regulasi Kemendikbudristek: Sekolah tampil sangat profesional dengan tata letak rapor yang rapi, elegan, berwibawa, dan siap cetak atau diunduh format PDF."
+    )
 
-    # 4.3 Modul E-Learning, Tugas Mandiri, & CBT Online Engine
-    add_heading_with_spacing(doc, "4.3. Modul E-Learning, Tugas Mandiri, & Ujian Online (CBT Engine)", level=2, space_before=14, space_after=6, color=COLOR_SECONDARY)
-    doc.add_paragraph("Fasilitas pembelajaran digital terpadu di mana dewan guru dapat membagikan materi bacaan, file presentasi PDF, serta memberikan tugas mandiri dengan counter batas waktu pengumpulan (deadlines). Selain itu, tersedia mesin ujian online Computer Based Test (CBT) mandiri dengan timer berwaktu, pengacakan nomor soal & opsi pilihan ganda, auto-save jawaban saat koneksi terputus, dan koreksi otomatis sehingga skor ujian siswa keluar seketika.")
-    add_figure_image(doc, "proposal_images/05_cbt_exam.png", "Gambar 4.4: Antarmuka Ruang Ujian CBT Siswa Berwaktu Lengkap dengan Sistem Penilaian Instan")
+    # 4.3 Modul E-Learning & CBT Online Engine
+    add_heading_with_spacing(doc, "4.3. Modul E-Learning, Tugas Mandiri, & Ujian Online (CBT Engine)", level=2, space_before=16, space_after=6, color=COLOR_SECONDARY)
+    add_problem_box(
+        doc,
+        "Penyelenggaraan ujian konvensional berbasis kertas (PTS, PAS, Asesmen Harian) menyedot anggaran fotokopi hingga puluhan juta rupiah setiap tahun. Ditambah lagi risiko kebocoran naskah soal, tumpukan berkas lembar jawaban yang berantakan, serta kelelahan guru yang harus mengoreksi ratusan lembar jawaban secara manual satu per satu. Siswa generasi digital masa kini juga merasa metode kertas konvensional sangat membosankan dan membuat mereka gagap saat menghadapi ujian berbasis komputer nasional (seperti ANBK atau SNBT/UTBK)."
+    )
+    add_solution_box(
+        doc,
+        "CENDEKIA menyatukan ruang E-Learning dan mesin ujian mandiri Computer Based Test (CBT) berkemampuan tinggi. Guru dapat membagikan modul ajar multimedia (PDF, materi ringkasan, instruksi tugas) lengkap dengan batas akhir pengumpulan tugas (deadline tracker). Pada modul CBT, ujian dilengkapi sistem hitung mundur (countdown timer), pengacakan otomatis urutan butir soal serta opsi pilihan ganda (anti-contek), fitur auto-save jawaban setiap detik saat koneksi internet siswa naik-turun, serta koreksi otomatis yang menghitung skor dan analisis butir soal seketika setelah tombol selesai ditekan."
+    )
+    add_figure_image(doc, "proposal_images/05_cbt_exam.png", "Gambar 4.4: Antarmuka Ruang Ujian CBT Siswa Berwaktu Lengkap dengan Navigasi Soal dan Koreksi Nilai Instan")
+    add_impact_box(
+        doc,
+        "1. Penghematan Anggaran Kertas (Cost Saving Raksasa): Menghapus 100% biaya pembelian kertas dan fotokopi lembar soal ujian (menghemat Rp 15.000.000 – Rp 35.000.000 per tahun untuk sekolah berkapasitas 500–1.000 siswa).\n"
+        "2. Efisiensi Koreksi Instan: Nilai ujian siswa langsung keluar dalam hitungan detik setelah ujian berakhir; guru bebas dari beban koreksi manual dan dapat langsung mengevaluasi daya serap siswa.\n"
+        "3. Kesiapan Kompetensi Digital Siswa: Melatih siswa terbiasa dengan ritme dan antarmuka tes berbasis komputer standar nasional, mendongkrak capaian nilai dan reputasi sekolah."
+    )
 
-    # 4.4 Modul Smart Finance: Manajemen SPP & Tagihan Massal
-    add_heading_with_spacing(doc, "4.4. Modul Smart Finance: Manajemen Tagihan & Penerbitan SPP Massal", level=2, space_before=14, space_after=6, color=COLOR_SECONDARY)
-    doc.add_paragraph("Membebaskan staf Tata Usaha dari pembuatan kwitansi dan penulisan buku kas manual yang melelahkan. Staf TU dapat menerbitkan tagihan SPP bulanan ke seluruh siswa (500–1.000 siswa) hanya dengan 1 klik tombol 'Generate Tagihan Massal' di awal bulan. Setiap transaksi pembayaran dapat diverifikasi (Tunai, Transfer Bank, QRIS), otomatis menerbitkan kwitansi resmi digital ber-ID transaksi unik, dan menyajikan dashboard audit piutang sekolah secara transparan.")
-    add_figure_image(doc, "proposal_images/02_finance_spp.png", "Gambar 4.5: Modul Keuangan & Generator Penerbitan Tagihan SPP Massal Sekali Klik")
+    # 4.4 Modul Smart Finance: SPP & Tagihan Massal
+    add_heading_with_spacing(doc, "4.4. Modul Smart Finance: Manajemen Tagihan & Penerbitan SPP Massal", level=2, space_before=16, space_after=6, color=COLOR_SECONDARY)
+    add_problem_box(
+        doc,
+        "Tunggakan pembayaran SPP adalah ancaman terbesar bagi kelancaran arus kas (cashflow) dan pembayaran gaji dewan guru di sekolah swasta. Staf Tata Usaha harus menulis buku kwitansi berkarbon satu per satu untuk ratusan siswa, memicu antrean panjang di loket TU saat tanggal gajian. Pencatatan manual sering memicu selisih kas, rekapitulasi piutang kabur, dan orang tua sering beralasan 'lupa bayar' karena tidak ada rekap tagihan yang jelas. Banyak pula kasus uang SPP yang dititipkan orang tua kepada anak malah terpakai untuk bermain game atau kebutuhan konsumtif lain."
+    )
+    add_solution_box(
+        doc,
+        "Fitur 'Mass Billing Generator' pada modul Smart Finance CENDEKIA memungkinkan staf Tata Usaha/Keuangan menerbitkan tagihan SPP bulanan ke seluruh siswa (ratusan hingga ribuan siswa) hanya dengan 1 KALI KLIK di awal bulan. Sistem otomatis menyusun Kartu SPP Digital untuk setiap siswa, memfasilitasi pencatatan multi-metode pembayaran (Tunai di Loket, Transfer Bank, maupun QRIS), menerbitkan kwitansi resmi digital ber-ID transaksi unik, serta menyediakan dashboard audit kas dan daftar siswa yang menunggak secara real-time dan akurat."
+    )
+    add_figure_image(doc, "proposal_images/02_finance_spp.png", "Gambar 4.5: Modul Keuangan & Generator Penerbitan Tagihan SPP Massal Sekali Klik dengan Dashboard Audit Piutang")
+    add_impact_box(
+        doc,
+        "1. Percepatan Arus Kas (Cashflow Liquidity): Menurunkan angka keterlambatan bayar SPP hingga 70–80% karena informasi tagihan transparan dan terpantau langsung di ponsel wali murid.\n"
+        "2. Menutup Celah Kebocoran Dana: Menghilangkan risiko uang titipan SPP disalahgunakan siswa atau hilang di jalan; seluruh riwayat transaksi terekam permanen dan dapat diaudit secara terbuka.\n"
+        "3. Efisiensi Kerja Staf TU Hingga 90%: Dari proses pencatatan manual berhari-hari menjadi hitungan menit; staf TU terbebas dari antrean administrasi yang melelahkan."
+    )
 
-    # 4.5 Modul Bimbingan Konseling (BK) & Kedisiplinan Siswa
-    add_heading_with_spacing(doc, "4.5. Modul Bimbingan Konseling (BK) & Kedisiplinan Siswa", level=2, space_before=14, space_after=6, color=COLOR_SECONDARY)
-    doc.add_paragraph("Pusat pencatatan pelanggaran tata tertib dan riwayat pembinaan kesiswaan. Mengkategorikan jenis pelanggaran (Ringan, Sedang, Berat) dengan sistem akumulasi poin sanksi yang objektif dan transparan. Wali murid dapat melihat riwayat kedisiplinan anaknya secara terbuka di aplikasi, sehingga mencegah komplain atau penolakan saat pihak sekolah memberikan pembinaan bertahap.")
+    # 4.5 Modul Bimbingan Konseling (BK) & Kedisiplinan
+    add_heading_with_spacing(doc, "4.5. Modul Bimbingan Konseling (BK) & Manajemen Kedisiplinan Siswa", level=2, space_before=16, space_after=6, color=COLOR_SECONDARY)
+    add_problem_box(
+        doc,
+        "Buku saku catatan pelanggaran siswa kerap kali tercecer, hilang, atau hanya tersimpan di laci guru BK tanpa terkoordinasi dengan wali kelas dan kepala sekolah. Ketika siswa melakukan pelanggaran berulang hingga batas kritis dan sekolah harus menjatuhkan sanksi (seperti skorsing atau pemanggilan orang tua), wali murid sering kali tidak terima, memprotes keras, dan menuduh sekolah berbuat tidak adil karena merasa tidak pernah diberi peringatan atau pembinaan bertahap sebelumnya."
+    )
+    add_solution_box(
+        doc,
+        "CENDEKIA menyediakan modul Bimbingan Konseling (BK) digital berbasis poin kedisiplinan objektif. Sistem membagi tindakan siswa ke dalam bobot pelanggaran (Ringan, Sedang, Berat) serta poin apresiasi prestasi. Setiap catatan mencantumkan tanggal kejadian, saksi, deskripsi masalah, dan langkah pembinaan guru BK. Seluruh riwayat ini terakumulasi otomatis dan dapat dilihat secara transparan oleh orang tua melalui Portal Wali Murid, menciptakan jembatan pembinaan karakter bersama antara keluarga dan sekolah."
+    )
+    add_impact_box(
+        doc,
+        "1. Bukti Pembinaan yang Sah & Terbuka: Menghilangkan potensi konflik atau tuntutan hukum dari orang tua karena sekolah memiliki rekam jejak digital kronologis yang tidak dapat dibantah.\n"
+        "2. Deteksi Dini Permasalahan Karakter: Guru BK dan wali kelas dapat melakukan intervensi preventif sejak pelanggaran masih berada di level ringan sebelum berkembang menjadi masalah serius.\n"
+        "3. Iklim Sekolah Tertib & Positif: Siswa lebih menghargai tata tertib karena sistem poin berlaku adil, objektif, dan transparan bagi seluruh peserta didik tanpa pilih kasih."
+    )
 
-    # 4.6 Modul Inovasi: Portal Wali Murid Real-time & Smart Hybrid Meeting (Zoom/Meet)
-    add_heading_with_spacing(doc, "4.6. Modul Inovasi: Portal Wali Murid Real-time & Smart Hybrid Meeting", level=2, space_before=14, space_after=6, color=COLOR_SECONDARY)
-    doc.add_paragraph("Menghubungkan orang tua dengan aktivitas sekolah 24/7. Menampilkan lencana kehadiran anak hari ini, kotak peringatan darurat merah jika anak tercatat Alpa, informasi tagihan SPP, serta agenda rapat daring (Zoom / Google Meet). Menggunakan arsitektur cerdas yang mengalihkan video streaming ke infrastruktur global Zoom/Meet sehingga beban bandwidth server sekolah tetap 0% (bebas biaya server mahal).")
-    add_figure_image(doc, "proposal_images/07_portal_orangtua.png", "Gambar 4.6: Portal Wali Murid Real-time: Presensi Anak, Peringatan Alpa, Poin BK, dan Link Rapat Zoom")
+    # 4.6 Modul Inovasi: Portal Wali Murid Real-time & Smart Hybrid Meeting
+    add_heading_with_spacing(doc, "4.6. Modul Inovasi: Portal Wali Murid Real-time & Smart Hybrid Video Meeting", level=2, space_before=16, space_after=6, color=COLOR_SECONDARY)
+    add_problem_box(
+        doc,
+        "Kesibukan kerja para orang tua modern sering membuat mereka sulit meluangkan waktu hadir ke sekolah untuk rapat komite atau konsultasi rapor, sehingga tingkat kehadiran rapat orang tua kerap di bawah 50%. Di sisi lain, jika pihak sekolah ingin menyelenggarakan rapat video online mandiri, tim IT sekolah terkendala oleh mahalnya biaya server video streaming (WebRTC) yang membutuhkan bandwidth raksasa (mencapai puluhan juta rupiah per bulan) serta server sekolah yang rentan crash saat diakses ratusan peserta secara serentak."
+    )
+    add_solution_box(
+        doc,
+        "CENDEKIA memadukan Portal Wali Murid Real-time dengan arsitektur inovatif 'Smart Hybrid Video Meeting'. Portal Wali Murid menampilkan kartu status kehadiran anak hari ini (dilengkapi peringatan visual merah jika anak Alpa), rincian tagihan SPP, nilai akademik, dan poin BK langsung dari HP orang tua. Untuk kegiatan rapat online, sistem mengintegrasikan tautan ruang rapat ke infrastruktur global Zoom atau Google Meet dalam 1 klik. Lalu lintas video dialihkan ke jaringan cloud global, sehingga BEBAN BANDWIDTH SERVER SEKOLAH TETAP 0% DAN BIAYA SERVER TETAP NOL RUPIAH!"
+    )
+    add_figure_image(doc, "proposal_images/07_portal_orangtua.png", "Gambar 4.6: Portal Wali Murid Real-time: Presensi Anak Hari Ini, Peringatan Alpa, Poin BK, Tagihan SPP, dan Rapat Zoom 1-Klik")
+    add_impact_box(
+        doc,
+        "1. Partisipasi Wali Murid Tembus 95%: Orang tua dapat mengikuti rapat koordinasi sekolah dan konsultasi evaluasi belajar anak dari kantor atau rumah tanpa terkendala macet.\n"
+        "2. Kepuasan & Loyalitas Wali Murid Meroket: Layanan informasi yang real-time dan transparan membuat orang tua merasa bangga dan sangat percaya pada mutu manajemen sekolah.\n"
+        "3. Solusi Cerdas Tanpa Beban Finansial: Sekolah menikmati fasilitas video conference kelas dunia tanpa perlu membeli atau menyewa server berkecepatan tinggi yang mahal."
+    )
 
-    # 4.7 Modul Aplikasi Mobile Multi-Platform (Android, iOS & PWA)
-    add_heading_with_spacing(doc, "4.7. Modul Aplikasi Mobile Multi-Platform (PWA, Android & iOS)", level=2, space_before=14, space_after=6, color=COLOR_SECONDARY)
-    doc.add_paragraph("Memberikan kemudahan akses bagi siswa dan wali murid langsung dari genggaman ponsel pintar. Tersedia dalam teknologi Progressive Web App (PWA) instan yang dapat langsung dipasang ke layar utama HP tanpa antrean unduhan di Play Store, serta project native Android Studio mandiri. Tampilan responsif dirancang seringan mungkin, cepat, dan hemat kuota internet.")
+    # 4.7 Modul Aplikasi Mobile Multi-Platform (Android, iOS & PWA Modern)
+    add_heading_with_spacing(doc, "4.7. Modul Aplikasi Mobile Multi-Platform (PWA, Android & iOS)", level=2, space_before=16, space_after=6, color=COLOR_SECONDARY)
+    add_problem_box(
+        doc,
+        "Aplikasi sistem sekolah terdahulu umumnya hanya berbasis web desktop yang kaku, lambat dibuka di ponsel, dan mengharuskan pengguna mengetikkan URL panjang berulang kali. Bila dipaksakan membuat aplikasi Android native di Play Store, ukurannya seringkali berat (puluhan hingga ratusan megabyte), memakan memori HP orang tua kelas menengah ke bawah, lambat diunduh di area sinyal minim, dan sekolah harus menanggung biaya pemeliharaan akun developer store setiap tahun."
+    )
+    add_solution_box(
+        doc,
+        "CENDEKIA mengadopsi teknologi terdepan Progressive Web App (PWA) ultra-ringan yang didukung penuh oleh source code native Android Studio. Aplikasi dapat langsung dipasang ke layar utama (Home Screen) smartphone hanya dengan 1 sentuhan, tanpa antrean unduhan di Play Store dan hanya memerlukan ruang penyimpanan kurang dari 3 MB! Tampilan antarmuka sangat responsif, memuat data dalam waktu kurang dari 1 detik, mendukung push notifications, serta sangat ramah konsumsi baterai dan kuota internet."
+    )
     add_two_mobile_figures(doc, "proposal_images/08_mobile_parent.png", "Gambar 4.7: Tampilan Mobile Portal Orang Tua", "proposal_images/09_mobile_student.png", "Gambar 4.8: Tampilan Mobile Portal Siswa")
+    add_impact_box(
+        doc,
+        "1. Kemudahan Akses Universal: Berjalan mulus di segala tipe smartphone (Android maupun iPhone) dari level pemula (entry-level) hingga premium tanpa membebani perangkat.\n"
+        "2. Kecepatan Komunikasi Sekolah: Pengumuman penting, jadwal ujian, dan status kehadiran langsung tersaji di saku orang tua dan siswa setiap saat.\n"
+        "3. Zero Maintenance bagi Pengguna: Sistem diperbarui secara terpusat di cloud; pengguna tidak perlu repot melakukan update manual berulang kali di Play Store."
+    )
 
     doc.add_page_break()
 
