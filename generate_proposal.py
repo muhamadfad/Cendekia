@@ -228,12 +228,12 @@ def build_comprehensive_proposal():
         ("1. Ringkasan Eksekutif (Executive Summary)", "Visi modernisasi sekolah dan gambaran umum platform Cendekia"),
         ("2. Analisis Permasalahan Nyata di Sekolah (Pain Points)", "Kelemahan sistem konvensional: absensi manual, rapor lembur, tunggakan SPP, ujian kertas"),
         ("3. Solusi Terpadu Ekosistem Cendekia", "Arsitektur solusi all-in-one tanpa fragmentasi aplikasi"),
-        ("4. Penjelasan Mendalam Setiap Modul & Fitur Unggulan", "Bedah fitur modul Akademik, LMS, CBT, Keuangan, BK, Hybrid Meeting, dan Mobile"),
+        ("4. Penjelasan Mendalam Setiap Modul & Fitur Unggulan", "Bedah fitur Website Profil Resmi, Presensi, E-Rapor, CBT, Keuangan, BK, Hybrid Zoom, dan Mobile"),
         ("5. Matriks Manfaat & Benefit Komprehensif per Pengguna", "Keuntungan bagi Yayasan, Kepala Sekolah, Tata Usaha, Guru Mapel, Wali Kelas, Siswa, dan Orang Tua"),
         ("6. Inovasi Smart Hybrid Video Meeting (Nol Beban Server)", "Penyelenggaraan rapat daring komite dan bagi rapor tanpa biaya server jutaan rupiah"),
         ("7. Analisis Penghematan Biaya & Return on Investment (ROI)", "Komparasi riil efisiensi biaya kertas, fotokopi, waktu kerja guru, dan kecepatan cashflow"),
         ("8. Spesifikasi Teknis, Keamanan & Hak Milik Data", "Standar keamanan data, enkripsi, hak privasi institusi, dan reliabilitas server"),
-        ("9. Skema Paket Investasi & Biaya Kerja Sama", "Pilihan paket SaaS bulanan, paket tahunan mandiri, hingga beli putus (Enterprise)"),
+        ("9. Skema Paket Investasi & Biaya Kerja Sama", "Pilihan paket Website Profil, paket SIAKAD Sekolah, paket Bundling, hingga Enterprise"),
         ("10. Rencana Implementasi, Pelatihan (Training), & Garansi Layanan", "Roadmap 4 minggu go-live, transfer knowledge, dan dukungan teknis 24/7"),
         ("11. Penutup & Lembar Kesepakatan Resmi", "Prosedur jadwal demo dan nota persetujuan kerja sama")
     ]
@@ -481,6 +481,24 @@ def build_comprehensive_proposal():
         "3. Zero Maintenance bagi Pengguna: Sistem diperbarui secara terpusat di cloud; pengguna tidak perlu repot melakukan update manual berulang kali di Play Store."
     )
 
+    # 4.8 Modul Website Profil Resmi Sekolah (.sch.id)
+    add_heading_with_spacing(doc, "4.8. Modul Website Profil Resmi Sekolah (.sch.id) & Portal Informasi Publik", level=2, space_before=16, space_after=6, color=COLOR_SECONDARY)
+    add_problem_box(
+        doc,
+        "Banyak institusi sekolah di daerah belum memiliki situs web resmi berdomain dinas (.sch.id) atau hanya menggunakan template blog gratisan yang tampilannya berantakan, tidak terawat, serta rentan mengalami peretasan (defacement iklan judi online). Akibatnya, masyarakat dan calon wali murid sulit mencari informasi resmi, pelaksanaan PPDB online terhambat, dan sekolah dinilai kurang siap bertransformasi digital saat dinas pendidikan maupun tim asesor akreditasi BAN-S/M melakukan visitasi."
+    )
+    add_solution_box(
+        doc,
+        "CENDEKIA menghadirkan Website Profil Resmi Sekolah yang mengadopsi standar portal terdepan (seperti referensi SMAN 1 Raha). Dilengkapi domain dinas resmi (.sch.id), sertifikat keamanan SSL, Sambutan Kepala Sekolah yang berwibawa, visi & misi, profil jurusan/peminatan, fasilitas sarana prasarana, galeri dokumentasi kegiatan, informasi PPDB online, hingga rubrik berita terkini. Website ini dirancang sangat elegan, responsif di segala perangkat ponsel/laptop, serta dilengkapi tombol Single-Sign-On menuju Portal SIAKAD internal guru dan siswa."
+    )
+    add_figure_image(doc, "proposal_images/13_sman1_raha_reference_match.png", "Gambar 4.9: Tampilan Website Profil Resmi Sekolah Berstandar Portal Maju Lengkap dengan Integrasi SIAKAD")
+    add_impact_box(
+        doc,
+        "1. Kredibilitas & Prestise Sekolah Meroket: Menghadirkan citra lembaga pendidikan yang modern, megah, dan terpercaya di mata masyarakat luas serta dinas pendidikan.\n"
+        "2. Rekrutmen Siswa Baru (PPDB) Efektif: Alur pendaftaran dan syarat masuk dapat diakses secara transparan dari mana saja, mempermudah panitia PPDB menjaring calon siswa berkualitas.\n"
+        "3. Poin Unggulan Akreditasi Nasional: Memenuhi instrumen akreditasi sekolah terkait transparansi informasi publik dan implementasi sarana teknologi informasi sekolah."
+    )
+
     doc.add_page_break()
 
     # =========================================================================
@@ -695,25 +713,25 @@ def build_comprehensive_proposal():
     format_table_headers(table_price, ["Pilihan Skema Paket", "Investasi Setup & Maintenance", "Cakupan Layanan & Fasilitas Sistem", "Nilai Strategis Bagi Sekolah"])
 
     pricing_options = [
-        ("PAKET STANDARD (SEKOLAH MENENGAH)\n(Kapasitas s.d 400 Siswa)",
-         "• Setup & Onboarding: Rp 12.500.000 (1x di awal)\n• Maintenance & Cloud SLA: Rp 2.750.000 / bulan\n(atau Rp 8.250.000 / triwulan)",
-         "• Deployment Server Cloud & Basis Data Sekolah Terisolasi\n• Migrasi Data Siswa & Guru dari Dapodik / Excel\n• Workshop Pelatihan Tatap Muka 2 Hari Guru & Staf TU\n• Seluruh Modul Web & Mobile Lengkap (4 Peran)\n• Cloud Hosting Uptime 99.8% & Backup Mingguan Otomatis\n• Bantuan Teknis Prioritas via WhatsApp Group",
-         "Sangat ideal bagi sekolah menengah yang ingin langsung beralih ke digitalisasi penuh dengan biaya awal yang tetap terjangkau dan pemeliharaan berkala yang terjamin."),
+        ("PAKET 1: WEBSITE PROFIL RESMI SEKOLAH (.sch.id)\n(Wajah Resmi Digital Sekolah)",
+         "• Biaya Tahun Pertama: Rp 4.000.000 (1x di awal)\n• Perpanjangan Tahun ke-2 dst: Rp 1.000.000 / tahun",
+         "• Desain Website Resmi Standar Portal Maju (seperti SMAN 1 Raha)\n• Domain Resmi Sekolah (.sch.id) & Cloud Hosting 1 Tahun\n• Profil, Visi-Misi, & Sambutan Resmi Kepala Sekolah\n• Modul Informasi PPDB Online (Penerimaan Siswa Baru)\n• Galeri Dokumentasi Kegiatan, Prestasi Siswa & Ekstrakurikuler\n• Sarana & Prasarana Sekolah, Kabar Berita, & Google Maps\n• Tombol Integrasi Satu Pintu ke Portal SIAKAD Sekolah\n• Pendampingan Penuh Input Data Awal Sekolah sampai Online Rapi",
+         "Solusi terbaik bagi sekolah yang ingin membangun citra resmi dan terpercaya di internet, menyukseskan rekrutmen PPDB online, serta memenuhi instrumen keterbukaan informasi akreditasi dinas."),
 
-        ("PAKET PRO UNGGULAN (ENTERPRISE)\n(Rekomendasi Utama – Kapasitas 400-1.200 Siswa)",
-         "• Setup & Onboarding: Rp 22.500.000 (1x di awal)\n• Maintenance & Cloud SLA: Rp 4.500.000 / bulan\n(atau Rp 13.500.000 / triwulan)",
-         "• Seluruh Fasilitas Paket Standard\n• Dedicated High-Performance Cloud Server (CBT Massal Serentak)\n• Domain Resmi Institusi (cendekia.namasekolah.sch.id)\n• Pelatihan Intensif 3 Hari & Workshop Evaluasi Semesteran\n• Pendampingan Khusus Tim Teknis saat Pembagian E-Rapor\n• Backup Harian Terenkripsi (Disaster Recovery)",
-         "Pilihan utama bagi sekolah favorit, swasta unggulan, dan pesantren modern. Menjamin stabilitas ujian CBT tanpa kendala antrean serta citra digital sekolah yang sangat prestisius."),
+        ("PAKET 2: SISTEM INFORMASI AKADEMIK (SIAKAD)\n(Fokus Operasional Guru & Kelas - s.d 200 Siswa)",
+         "• Biaya Tahun Pertama: Rp 3.500.000 (1x di awal)\n• Perpanjangan Tahun ke-2 dst: Rp 1.000.000 / tahun",
+         "• Database Induk Siswa (NISN/Dapodik) & Dewan Guru\n• Presensi Siswa Harian Digital via HP (30 Detik per Kelas)\n• Tombol Pengingat WhatsApp Resmi ke Wali Murid (1-Klik)\n• Buku Nilai Terpadu Formatif, Sumatif, PTS, dan PAS\n• Cetak Otomatis Dokumen E-Rapor Kurikulum Merdeka Format A4 Resmi\n• Modul Bimbingan Konseling (BK) & Poin Sanksi Siswa\n• Pelatihan & Pendampingan Dewan Guru sampai Lancar Menggunakan",
+         "Sangat ideal untuk sekolah di daerah. Membebaskan dewan guru dan wali kelas dari lembur manual rumus Excel saat pembagian rapor dengan biaya yang sangat terjangkau bagi kas sekolah."),
 
-        ("PAKET FLEKSIBEL PER-SISWA\n(SaaS Berbasis Iuran Fasilitas Siswa)",
-         "• Setup & Onboarding: Rp 9.500.000 (1x di awal)\n• Retainer Layanan: Rp 10.000 / siswa / bulan",
-         "• Seluruh Fitur Enterprise Lengkap Tanpa Batas\n• Biaya proporsional sesuai jumlah siswa aktif riil\n• Akun mandiri Siswa & Orang Tua aktif di ponsel\n• Kartu SPP Digital & Integrasi Zoom Rapat 1-Klik",
-         "Sangat menguntungkan bagi sekolah swasta. Sekolah dapat mengalokasikan dari iuran komputer/lab siswa (misal Rp 15.000/siswa/bulan), sehingga sekolah justru memperoleh SURPLUS kas operasional."),
+        ("PAKET 3: BUNDLING LENGKAP SEKOLAH DIGITAL\n(REKOMENDASI UTAMA – Website Profil + SIAKAD Penuh)",
+         "• Paket Lengkap Tahun Pertama: Rp 7.000.000 (Hemat Rp 500.000)\n• Perpanjangan Tahun ke-2 dst: Rp 1.500.000 – Rp 2.000.000 / tahun\n(Dapat dianggarkan rutin dari Dana BOS)",
+         "• Seluruh Fasilitas Paket 1 (Website Profil Resmi .sch.id Lengkap)\n• Seluruh Fasilitas Paket 2 (SIAKAD Guru & E-Rapor Kurikulum Merdeka)\n• Mesin Ujian Online CBT Mandiri (Acak Soal, Anti-Contek, Nilai Instan)\n• Modul Smart Finance SPP: Penerbitan Tagihan Massal Sekali Klik\n• Portal Wali Murid Real-Time di Ponsel & Notifikasi Kehadiran Anak\n• Smart Hybrid Video Meeting (Zoom/Meet 1-Klik Tanpa Beban Server)\n• Aplikasi Mobile PWA Super Ringan (< 3MB di Semua Smartphone)\n• Layanan Prioritas Bantuan Teknis dan Pembaruan Sistem",
+         "Paket investasi paling cerdas dan menyeluruh. Sekolah langsung memiliki ekosistem digital luar-dalam yang meningkatkan nilai akreditasi, menaikkan gengsi sekolah, dan menghemat biaya kertas puluhan juta rupiah."),
 
-        ("PAKET ENTERPRISE LISENSI PENUH\n(Beli Putus Yayasan Multi-Unit)",
-         "• Investasi Lisensi: Rp 75.000.000 s/d Rp 120.000.000 (One-Time)\n• Maintenance Opsional: Rp 2.500.000 / bulan",
-         "• Full Source Code & Hak Cipta Lisensi Penuh Yayasan\n• Deployment di Server Lokal / Data Center / VPS Mandiri Yayasan\n• Bebas Biaya Langganan Bulanan Selamanya\n• Kustomisasi Khusus Kurikulum Yayasan\n• Garansi Pemeliharaan Sistem 12 Bulan Penuh",
-         "Pilihan terbaik bagi yayasan berskala besar yang menaungi beberapa unit sekolah sekaligus (SD, SMP, SMA/SMK) dan menghendaki kedaulatan data di server internal.")
+        ("PAKET 4: ENTERPRISE YAYASAN BESAR\n(Kapasitas 400 - 1.200 Siswa / Multi-Unit)",
+         "• Biaya Tahun Pertama: Rp 15.000.000 (1x di awal)\n• Maintenance & Cloud SLA: Rp 3.500.000 / tahun\n(atau Rp 875.000 / triwulan)",
+         "• Seluruh Fasilitas Paket 3 Tanpa Batasan Pengguna\n• Dedicated High-Performance Cloud Server untuk CBT Massal Serentak\n• Manajemen Multi-Jenjang Unit Pendidikan (SD, SMP, SMA/SMK)\n• Kustomisasi Khusus Kurikulum dan Muatan Lokal Yayasan\n• Pendampingan Khusus Tim Teknis saat Pelaksanaan Ujian & Bagi Rapor\n• Backup Harian Terenkripsi (Disaster Recovery Guarantee)",
+         "Pilihan utama bagi yayasan besar, sekolah swasta favorit, dan pesantren modern yang membutuhkan kapasitas komputasi tinggi dan keleluasaan pengelolaan multi-unit.")
     ]
 
     for p_name, p_cost, p_feat, p_rec in pricing_options:
