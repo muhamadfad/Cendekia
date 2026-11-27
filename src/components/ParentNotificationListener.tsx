@@ -185,7 +185,7 @@ export default function ParentNotificationListener({ studentId }: { studentId?: 
       {/* Interactive Toast Notification (In-App) */}
       {activeToast && (
         <div
-          className={`fixed bottom-5 right-5 z-50 max-w-sm w-full p-4 rounded-xl shadow-2xl border transition-all transform animate-in slide-in-from-bottom-5 duration-300 ${
+          className={`fixed bottom-20 sm:bottom-5 left-4 right-4 sm:left-auto sm:right-5 z-50 sm:max-w-sm p-4 rounded-xl shadow-2xl border transition-all transform animate-in slide-in-from-bottom-5 duration-300 ${
             activeToast.status === "PRESENT"
               ? "bg-white border-emerald-300 text-slate-900"
               : activeToast.status === "EXCUSED"

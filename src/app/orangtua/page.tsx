@@ -64,7 +64,7 @@ export default async function OrangTuaDashboardPage() {
   const totalViolationPoints = student.violations.reduce((acc, v) => acc + v.points, 0);
 
   return (
-    <div className="p-8 max-w-[1400px] mx-auto space-y-6">
+    <div className="p-4 sm:p-6 md:p-8 max-w-[1400px] mx-auto space-y-5">
       {/* Realtime Attendance Push & Popup Listener */}
       <ParentNotificationListener studentId={student.id} />
 

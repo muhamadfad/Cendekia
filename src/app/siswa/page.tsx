@@ -36,10 +36,10 @@ export default async function SiswaDashboard() {
   });
 
   return (
-    <div className="p-8">
-      <div className="mb-6">
-        <h1 className="text-2xl font-bold text-slate-900">Ruang Belajar</h1>
-        <p className="text-sm text-slate-500 mt-1">Siap belajar hari ini? Ini ringkasan kelas dan tugasmu.</p>
+    <div className="p-4 sm:p-6 md:p-8 space-y-6">
+      <div className="mb-2">
+        <h1 className="text-xl sm:text-2xl font-bold text-slate-900">Ruang Belajar</h1>
+        <p className="text-xs sm:text-sm text-slate-500 mt-1">Siap belajar hari ini? Ini ringkasan kelas dan tugasmu.</p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
