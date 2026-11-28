@@ -165,33 +165,38 @@ def build_comprehensive_proposal():
     # =========================================================================
     p_pre = doc.add_paragraph()
     p_pre.alignment = WD_ALIGN_PARAGRAPH.CENTER
-    r_pre = p_pre.add_run("PROPOSAL PENAWARAN & KERJA SAMA DIGITALISASI SEKOLAH")
-    r_pre.font.size = Pt(11)
+    r_year = p_pre.add_run("TAHUN AJARAN 2026 / 2027\n")
+    r_year.font.size = Pt(14)
+    r_year.font.bold = True
+    r_year.font.color.rgb = COLOR_ACCENT
+
+    r_pre = p_pre.add_run("PROPOSAL PENAWARAN & KERJA SAMA STRATEGIS")
+    r_pre.font.size = Pt(12)
     r_pre.font.bold = True
-    r_pre.font.color.rgb = COLOR_ACCENT
+    r_pre.font.color.rgb = COLOR_PRIMARY
 
     p_title = doc.add_paragraph()
     p_title.alignment = WD_ALIGN_PARAGRAPH.CENTER
-    p_title.paragraph_format.space_before = Pt(24)
-    p_title.paragraph_format.space_after = Pt(10)
+    p_title.paragraph_format.space_before = Pt(20)
+    p_title.paragraph_format.space_after = Pt(8)
     r_title = p_title.add_run("CENDEKIA")
-    r_title.font.size = Pt(38)
+    r_title.font.size = Pt(40)
     r_title.font.bold = True
     r_title.font.color.rgb = COLOR_PRIMARY
 
     p_sub = doc.add_paragraph()
     p_sub.alignment = WD_ALIGN_PARAGRAPH.CENTER
-    p_sub.paragraph_format.space_after = Pt(36)
-    r_sub = p_sub.add_run("INTEGRATED SCHOOL ERP, CBT E-LEARNING, E-RAPOR DIGITAL & MOBILE PARENT PORTAL")
-    r_sub.font.size = Pt(12)
+    p_sub.paragraph_format.space_after = Pt(24)
+    r_sub = p_sub.add_run("SMART INTEGRATED SCHOOL ECOSYSTEM & DIGITAL PORTAL\nWebsite Profil Resmi (.sch.id) • SIAKAD Cloud • CBT Online • E-Rapor Digital • Mobile Parent Portal")
+    r_sub.font.size = Pt(10.5)
     r_sub.font.bold = True
     r_sub.font.color.rgb = COLOR_SECONDARY
 
     p_tagline = doc.add_paragraph()
     p_tagline.alignment = WD_ALIGN_PARAGRAPH.CENTER
-    p_tagline.paragraph_format.space_after = Pt(60)
-    r_tagline = p_tagline.add_run("Solusi Transformasi Digital Sekolah Modern: Menghilangkan Beban Kertas, Meniadakan Tunggakan SPP, dan Meningkatkan Prestasi serta Akreditasi Institusi Pendidikan.")
-    r_tagline.font.size = Pt(10.5)
+    p_tagline.paragraph_format.space_after = Pt(48)
+    r_tagline = p_tagline.add_run("Solusi Komprehensif Transformasi Digital Sekolah Modern: Mewujudkan Tata Kelola Administrasi Tanpa Kertas (Paperless), Efisiensi Kas SPP Tanpa Tunggakan, Presensi Real-Time ke Orang Tua, serta Peningkatan Prestasi & Akreditasi Lembaga Pendidikan.")
+    r_tagline.font.size = Pt(10)
     r_tagline.font.italic = True
     r_tagline.font.color.rgb = COLOR_MUTED
 
@@ -702,36 +707,41 @@ def build_comprehensive_proposal():
     add_heading_with_spacing(doc, "9. SKEMA PENAWARAN INVESTASI & BIAYA KERJA SAMA", level=1, color=COLOR_PRIMARY)
 
     doc.add_paragraph(
-        "Banyak institusi sekolah merasa ragu ketika harus berinvestasi pada sistem informasi baru karena kekhawatiran akan beban biaya pengadaan awal yang sangat tinggi (mencapai Rp 35 - 50 juta). Hal tersebut sering kali membebani kas yayasan dan terbentur pada pos anggaran tahunan yang belum dianggarkan."
+        "Banyak institusi sekolah merasa ragu ketika harus berinvestasi pada sistem informasi baru karena kekhawatiran akan beban biaya pengadaan awal yang sangat tinggi (mencapai Rp 35 - 50 juta). Di sisi lain, biaya pemeliharaan server yang disamaratakan sering kali tidak adil: sekolah kecil merasa keberatan, sementara sekolah besar mengalami server lambat/down akibat kelebihan beban pengguna."
     )
     doc.add_paragraph(
-        "CENDEKIA menghadirkan solusi penganggaran yang proporsional, realistis, dan berkelas enterprise melalui skema: 'BIAYA SETUP TERJANGKAU + MANAGED MAINTENANCE BERKALA'. Dengan model ini, sekolah dapat langsung menikmati sistem digital grade-A tanpa menguras kas modal di awal, sementara kelangsungan performa server, keamanan data, dan pendampingan teknis dijamin penuh melalui biaya pemeliharaan berkala yang sangat terjangkau bagi operasional sekolah."
+        "CENDEKIA menerapkan prinsip 'PROPORTIONAL CAPACITY & MANAGED CLOUD': Biaya investasi setup awal sangat terjangkau, sedangkan biaya sewa server dan pemeliharaan berkala disesuaikan secara proporsional dengan skala populasi siswa dan beban komputasi sekolah. Sekolah dengan 1.000 siswa yang melaksanakan ujian CBT massal serentak mendapatkan alokasi cloud server berkapasitas tinggi (High-Concurrency Server), sementara sekolah berkapasitas 200 siswa menikmati tarif hemat yang sangat ringan bagi kas sekolah."
     )
 
     table_price = doc.add_table(rows=1, cols=4)
     table_price.alignment = WD_TABLE_ALIGNMENT.CENTER
-    format_table_headers(table_price, ["Pilihan Skema Paket", "Investasi Setup & Maintenance", "Cakupan Layanan & Fasilitas Sistem", "Nilai Strategis Bagi Sekolah"])
+    format_table_headers(table_price, ["Skema Paket & Kapasitas", "Investasi Setup & Sewa Server", "Cakupan Modul & Spesifikasi Cloud", "Nilai Strategis Bagi Sekolah"])
 
     pricing_options = [
         ("PAKET 1: WEBSITE PROFIL RESMI SEKOLAH (.sch.id)\n(Wajah Resmi Digital Sekolah)",
-         "• Biaya Tahun Pertama: Rp 4.000.000 (1x di awal)\n• Perpanjangan Tahun ke-2 dst: Rp 1.000.000 / tahun",
-         "• Desain Website Resmi Standar Portal Maju (seperti SMAN 1 Raha)\n• Domain Resmi Sekolah (.sch.id) & Cloud Hosting 1 Tahun\n• Profil, Visi-Misi, & Sambutan Resmi Kepala Sekolah\n• Modul Informasi PPDB Online (Penerimaan Siswa Baru)\n• Galeri Dokumentasi Kegiatan, Prestasi Siswa & Ekstrakurikuler\n• Sarana & Prasarana Sekolah, Kabar Berita, & Google Maps\n• Tombol Integrasi Satu Pintu ke Portal SIAKAD Sekolah\n• Pendampingan Penuh Input Data Awal Sekolah sampai Online Rapi",
-         "Solusi terbaik bagi sekolah yang ingin membangun citra resmi dan terpercaya di internet, menyukseskan rekrutmen PPDB online, serta memenuhi instrumen keterbukaan informasi akreditasi dinas."),
+         "• Biaya Tahun Pertama: Rp 4.000.000 (1x di awal)\n• Perpanjangan Tahun ke-2 dst: Rp 1.250.000 / tahun\n(atau Rp 312.500 / triwulan)",
+         "• Desain Website Resmi Standar Portal Maju (seperti SMAN 1 Raha)\n• Domain Resmi Sekolah (.sch.id) & SSL Certificate\n• Cloud Hosting SSD 1 Tahun Penuh (Uptime 99.8%)\n• Profil, Visi-Misi, & Sambutan Resmi Kepala Sekolah\n• Modul Informasi PPDB Online (Penerimaan Siswa Baru)\n• Galeri Dokumentasi Kegiatan, Prestasi Siswa & Sarpras\n• Rubrik Kabar Berita Sekolah & Google Maps Lokasi\n• Tombol Integrasi Satu Pintu ke Portal SIAKAD Sekolah",
+         "Membangun citra resmi dan prestisius sekolah di mata masyarakat luas, mempermudah panitia PPDB menjaring calon siswa baru, serta memenuhi instrumen keterbukaan informasi akreditasi dinas."),
 
-        ("PAKET 2: SISTEM INFORMASI AKADEMIK (SIAKAD)\n(Fokus Operasional Guru & Kelas - s.d 200 Siswa)",
-         "• Biaya Tahun Pertama: Rp 3.500.000 (1x di awal)\n• Perpanjangan Tahun ke-2 dst: Rp 1.000.000 / tahun",
-         "• Database Induk Siswa (NISN/Dapodik) & Dewan Guru\n• Presensi Siswa Harian Digital via HP (30 Detik per Kelas)\n• Tombol Pengingat WhatsApp Resmi ke Wali Murid (1-Klik)\n• Buku Nilai Terpadu Formatif, Sumatif, PTS, dan PAS\n• Cetak Otomatis Dokumen E-Rapor Kurikulum Merdeka Format A4 Resmi\n• Modul Bimbingan Konseling (BK) & Poin Sanksi Siswa\n• Pelatihan & Pendampingan Dewan Guru sampai Lancar Menggunakan",
-         "Sangat ideal untuk sekolah di daerah. Membebaskan dewan guru dan wali kelas dari lembur manual rumus Excel saat pembagian rapor dengan biaya yang sangat terjangkau bagi kas sekolah."),
+        ("PAKET 2: TIER A – SEKOLAH TUNAS\n(Kapasitas s.d. 250 Siswa)",
+         "• Setup & Lisensi Thn ke-1: Rp 6.000.000 (1x di awal)\n• Sewa Cloud & Maint Thn ke-2 dst: Rp 2.800.000 / tahun\n(atau Rp 700.000 / triwulan BOS)",
+         "• Kapasitas: s.d. 250 Siswa & 25 Guru/Tendik\n• Standard Cloud Node (2 vCPU, 4GB RAM, NVMe Storage)\n• Database Induk Siswa (NISN/Dapodik) & Presensi HP\n• Buku Nilai Terpadu & E-Rapor Kurikulum Merdeka A4\n• Modul CBT Ujian Online Mandiri (s.d 250 peserta serentak)\n• Modul SPP & Rekap Piutang Otomatis\n• Portal Wali Murid Mobile (PWA) & Notifikasi Kehadiran\n• Backup Mingguan Otomatis & Pendampingan Helpdesk WA",
+         "Sangat ideal bagi sekolah swasta berkembang atau sekolah di daerah. Menyederhanakan seluruh administrasi guru dan rapor dengan alokasi dana operasional yang sangat ringan."),
 
-        ("PAKET 3: BUNDLING LENGKAP SEKOLAH DIGITAL\n(REKOMENDASI UTAMA – Website Profil + SIAKAD Penuh)",
-         "• Paket Lengkap Tahun Pertama: Rp 7.000.000 (Hemat Rp 500.000)\n• Perpanjangan Tahun ke-2 dst: Rp 1.500.000 – Rp 2.000.000 / tahun\n(Dapat dianggarkan rutin dari Dana BOS)",
-         "• Seluruh Fasilitas Paket 1 (Website Profil Resmi .sch.id Lengkap)\n• Seluruh Fasilitas Paket 2 (SIAKAD Guru & E-Rapor Kurikulum Merdeka)\n• Mesin Ujian Online CBT Mandiri (Acak Soal, Anti-Contek, Nilai Instan)\n• Modul Smart Finance SPP: Penerbitan Tagihan Massal Sekali Klik\n• Portal Wali Murid Real-Time di Ponsel & Notifikasi Kehadiran Anak\n• Smart Hybrid Video Meeting (Zoom/Meet 1-Klik Tanpa Beban Server)\n• Aplikasi Mobile PWA Super Ringan (< 3MB di Semua Smartphone)\n• Layanan Prioritas Bantuan Teknis dan Pembaruan Sistem",
-         "Paket investasi paling cerdas dan menyeluruh. Sekolah langsung memiliki ekosistem digital luar-dalam yang meningkatkan nilai akreditasi, menaikkan gengsi sekolah, dan menghemat biaya kertas puluhan juta rupiah."),
+        ("PAKET 3: TIER B – SEKOLAH BERKEMBANG\n(Kapasitas 251 – 500 Siswa)\n[REKOMENDASI UTAMA]",
+         "• Setup & Lisensi Thn ke-1: Rp 8.500.000 (Hemat Paket Bundling)\n• Sewa Cloud & Maint Thn ke-2 dst: Rp 4.800.000 / tahun\n(atau Rp 1.200.000 / triwulan BOS)",
+         "• SUDAH TERMASUK PAKET 1 (Website Profil .sch.id Lengkap)\n• Kapasitas: 251 – 500 Siswa & 50 Guru/Tendik\n• Enhanced Cloud Node (4 vCPU, 8GB RAM, High Bandwidth)\n• Ekosistem SIAKAD Penuh: Presensi, E-Rapor, SPP, CBT Online\n• Mesin CBT Siap Ujian Serentak 500 Siswa Tanpa Lag/Crash\n• Modul Bimbingan Konseling (BK) & Poin Sanksi Siswa\n• Smart Hybrid Video Meeting (Zoom/Meet 1-Klik)\n• Automatic Daily Backup & Pendampingan Khusus Ujian/Rapor",
+         "Pilihan paling strategis dan populer. Sekolah langsung memiliki ekosistem digital luar-dalam yang lengkap, menaikkan nilai akreditasi, dan menghemat anggaran kertas fotokopi belasan juta rupiah per semester."),
 
-        ("PAKET 4: ENTERPRISE YAYASAN BESAR\n(Kapasitas 400 - 1.200 Siswa / Multi-Unit)",
-         "• Biaya Tahun Pertama: Rp 15.000.000 (1x di awal)\n• Maintenance & Cloud SLA: Rp 3.500.000 / tahun\n(atau Rp 875.000 / triwulan)",
-         "• Seluruh Fasilitas Paket 3 Tanpa Batasan Pengguna\n• Dedicated High-Performance Cloud Server untuk CBT Massal Serentak\n• Manajemen Multi-Jenjang Unit Pendidikan (SD, SMP, SMA/SMK)\n• Kustomisasi Khusus Kurikulum dan Muatan Lokal Yayasan\n• Pendampingan Khusus Tim Teknis saat Pelaksanaan Ujian & Bagi Rapor\n• Backup Harian Terenkripsi (Disaster Recovery Guarantee)",
-         "Pilihan utama bagi yayasan besar, sekolah swasta favorit, dan pesantren modern yang membutuhkan kapasitas komputasi tinggi dan keleluasaan pengelolaan multi-unit.")
+        ("PAKET 4: TIER C – SEKOLAH MAJU / FAVORIT\n(Kapasitas 501 – 1.000 Siswa)",
+         "• Setup & Lisensi Thn ke-1: Rp 13.500.000 (1x di awal)\n• Sewa Cloud & Maint Thn ke-2 dst: Rp 7.800.000 / tahun\n(atau Rp 1.950.000 / triwulan BOS)",
+         "• SUDAH TERMASUK PAKET 1 (Website Profil .sch.id Lengkap)\n• Kapasitas: 501 – 1.000 Siswa & 80 Guru/Tendik\n• Dedicated Cloud Server (6 vCPU, 16GB RAM, Dedicated Bandwidth)\n• Arsitektur High-Concurrency untuk CBT Massal Seluruh Angkatan\n• Multi-Admin Support (Kasir Keuangan, Tata Usaha, Guru Mapel, BK)\n• Export Rekap Eksekutif untuk Kepala Sekolah & Yayasan\n• Prioritas SLA Server Uptime 99.9% & Emergency Standby Engineer\n• Backup Harian Terenkripsi (Disaster Recovery Guarantee)",
+         "Dirancang khusus untuk SMA/SMK Negeri maupun Swasta favorit dengan populasi siswa padat. Menjamin sistem tetap kencang dan stabil meskipun ratusan siswa login bersamaan saat ujian CBT."),
+
+        ("PAKET 5: TIER D – ENTERPRISE YAYASAN BESAR\n(Kapasitas > 1.000 Siswa / Multi-Unit)",
+         "• Setup & Lisensi Thn ke-1: Rp 20.000.000 (1x di awal)\n• Sewa Cloud & SLA Thn ke-2 dst: Rp 12.000.000 / tahun\n(atau Rp 3.000.000 / triwulan BOS)",
+         "• Seluruh Fasilitas Paket 4 Tanpa Batasan Jumlah Pengguna\n• Dedicated Server Cluster dengan Load Balancer Otomatis\n• Pengelolaan Multi-Jenjang Terpadu (SD, SMP, SMA/SMK Yayasan)\n• Kustomisasi Khusus Kurikulum Yayasan & Muatan Lokal\n• Tim Teknis Khusus Standby On-Site / Remote saat Ujian & Bagi Rapor\n• Pelatihan Khusus Berkala untuk Seluruh Dewan Guru Yayasan",
+         "Standar tertinggi bagi yayasan pendidikan terkemuka, pesantren modern, dan kompleks perguruan swasta yang membutuhkan keandalan komputasi enterprise serta integrasi multi-sekolah.")
     ]
 
     for p_name, p_cost, p_feat, p_rec in pricing_options:
@@ -761,17 +771,25 @@ def build_comprehensive_proposal():
     add_heading_with_spacing(doc, "9.1. Fleksibilitas Termin Pembayaran: Mengikuti Siklus Pencairan Dana BOS", level=2, space_before=14, space_after=6, color=COLOR_SECONDARY)
 
     doc.add_paragraph(
-        "Untuk memudahkan tata kelola administrasi bendahara sekolah, sistem pembayaran biaya pemeliharaan (maintenance) tidak harus dibayarkan setiap 30 hari, melainkan dapat dibayarkan per Triwulan (3 bulan sekali) atau per Semester (6 bulan sekali) mengikuti jadwal pencairan resmi Dana Bantuan Operasional Sekolah (BOS) atau termin penerimaan SPP yayasan."
+        "Untuk memudahkan tata kelola administrasi bendahara sekolah, sistem pembayaran biaya sewa cloud dan pemeliharaan (maintenance) tidak harus dibayarkan setiap bulan, melainkan dapat dibayarkan per Triwulan (3 bulan sekali) atau per Semester (6 bulan sekali) mengikuti jadwal pencairan resmi Dana Bantuan Operasional Sekolah (BOS) Kemendikbudristek atau termin penerimaan SPP yayasan."
     )
 
-    add_heading_with_spacing(doc, "9.2. Apa Saja yang Didapat Sekolah dari Biaya Maintenance Berkala?", level=2, space_before=12, space_after=6, color=COLOR_SECONDARY)
+    add_impact_box(
+        doc,
+        "Analisis Efisiensi Biaya per Siswa (Cost-per-Student Ratio):\n"
+        "• Alokasi Dana BOS Kemendikbudristek untuk jenjang SMA/SMK rata-rata berkisar antara Rp 1.500.000 s.d. Rp 1.800.000 per siswa per tahun.\n"
+        "• Pada Paket Tier B (251–500 Siswa) dengan biaya sewa server Rp 4.800.000/tahun, beban riil sistem CENDEKIA hanya berkisar Rp 9.600 per siswa per TAHUN (atau setara Rp 800 per siswa per bulan).\n"
+        "• Angka ini hanya menyerap sekitar 0,5% - 0,6% dari total Dana BOS yang diterima sekolah, namun memberikan lompatan efisiensi ribuan lembar kertas dan ratusan jam kerja guru yang tak ternilai harganya."
+    )
+
+    add_heading_with_spacing(doc, "9.2. Mengapa Alokasi Biaya Server Berbasis Kapasitas Sangat Krusial?", level=2, space_before=12, space_after=6, color=COLOR_SECONDARY)
     
     maint_items = [
-        ("Cloud Infrastructure 24/7 & Uptime 99.8%: ", "Sekolah tidak perlu membeli komputer server fisik yang bising, menyewa IP statis, atau membayar listrik cadangan (UPS). Seluruh sistem aktif di awan dan dapat diakses 24 jam nonstop."),
-        ("Pencadangan Data Otomatis (Automatic Weekly Backup): ", "Seluruh basis data nilai, absensi, dan transaksi SPP dicadangkan secara berkala ke lokasi server terpisah. Data sekolah terjamin aman 100% dari risiko virus, kerusakan hardware, maupun ancaman ransomware."),
-        ("Dukungan Teknis Prioritas (Dedicated Helpdesk via WhatsApp): ", "Tim teknis kami siap mendampingi operator TU, bendahara, maupun guru yang mengalami kesulitan teknis atau lupa alur kerja sistem pada setiap hari kerja."),
-        ("Pembaruan Sistem & Regulasi Kurikulum Gratis: ", "Apabila terdapat perubahan format rapor atau peraturan kurikulum baru dari Kemendikbudristek, pembaruan fitur (system update) diberikan secara cuma-cuma tanpa tagihan proyek baru."),
-        ("Pemeliharaan Integrasi Rapat Virtual: ", "Memastikan seluruh tautan rapat Zoom dan Google Meet pada portal siswa dan orang tua selalu tersinkronisasi dengan lancar.")
+        ("Penjaminan Beban Komputasi Ujian CBT Massal Serentak: ", "Saat ratusan siswa serentak mengerjakan soal ujian dari ponsel/komputer di jam yang sama, server membutuhkan konkurensi CPU dan RAM tinggi agar koneksi tidak terputus dan jawaban siswa tersimpan aman tanpa kehilangan data."),
+        ("Infrastruktur Cloud Dedicated & Uptime 99.8%: ", "Sekolah terbebas dari pengadaan server fisik di sekolah yang bising, menyewa IP statis mahal, atau risiko server mati saat listrik padam. Seluruh sistem aktif di data center tier-3 dan dapat diakses 24 jam nonstop dari mana saja."),
+        ("Pencadangan Data Otomatis & Terenkripsi (Automated Daily/Weekly Backup): ", "Seluruh basis data nilai, catatan kehadiran, dan transaksi SPP dicadangkan secara terenkripsi ke lokasi penyimpanan cloud terpisah. Data sekolah terjamin aman 100% dari ancaman virus, kerusakan hardware, maupun ransomware."),
+        ("Pembaruan Regulasi Kurikulum & Fitur Baru Tanpa Biaya Tambahan: ", "Apabila terdapat revisi format E-Rapor atau peraturan kurikulum baru dari Kemendikbudristek, pembaruan aplikasi diberikan secara cuma-cuma tanpa perlu sekolah membayar biaya proyek baru."),
+        ("Dukungan Teknis Prioritas (Dedicated Helpdesk via WhatsApp): ", "Tim teknis kami siap mendampingi operator tata usaha, bendahara, dan dewan guru yang membutuhkan asistensi teknis pada setiap hari kerja.")
     ]
 
     for m_title, m_desc in maint_items:
